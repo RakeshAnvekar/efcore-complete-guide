@@ -609,5 +609,306 @@ LINQ Query → EF Core → SQL Query → SQL Server → Result → C# Objects
 | Change Tracker | Detects modifications |
 
 ---
+<details>
+<summary><h1>5. Types of Approaches</h1></summary>
+
+# 5. Types of Approaches
+
+# Code First
+
+You create C# classes first.
+
+EF creates database.
+
+MOST USED in modern projects.
+
+---
+
+## How Code First Works
+
+```text
+C# Classes → EF Core → Database Tables
+```
+
+Developer creates:
+
+- Entities
+- DbContext
+- Relationships
+
+EF Core automatically creates database tables.
+
+---
+
+## Advantages of Code First
+
+- Faster development
+- Full control in C#
+- Easy migrations
+- Best for Agile development
+- MOST USED in modern .NET projects
+
+---
+
+## Example
+
+### Entity Class
+
+```csharp
+public class Employee
+{
+    public int Id { get; set; }
+
+    public string Name { get; set; }
+}
+```
+
+---
+
+### DbContext
+
+```csharp
+public class AppDbContext : DbContext
+{
+    public DbSet<Employee> Employees { get; set; }
+}
+```
+
+---
+
+### Migration Command
+
+```bash
+dotnet ef migrations add InitialCreate
+```
+
+EF Core creates database automatically.
+
+---
+
+# Database First
+
+Database already exists.
+
+EF generates models.
+
+Mostly used in legacy enterprise apps.
+
+---
+
+## How Database First Works
+
+```text
+Existing Database → EF Core → C# Models
+```
+
+EF Core reads database schema and generates:
+
+- Entity classes
+- DbContext
+- Relationships
+
+---
+
+## Advantages of Database First
+
+- Best for existing databases
+- Useful for legacy enterprise systems
+- Easy integration with old applications
+- Database already designed by DBAs
+
+---
+
+## Example Command
+
+```bash
+Scaffold-DbContext
+```
+
+or
+
+```bash
+dotnet ef dbcontext scaffold
+```
+
+This generates C# classes from database tables.
+
+---
+
+# Difference Between Code First and Database First
+
+| Feature | Code First | Database First |
+|----------|-------------|----------------|
+| Database Creation | From C# Classes | Existing Database |
+| Flexibility | High | Medium |
+| Modern Projects | Mostly Used | Less Used |
+| Legacy Projects | Rare | Common |
+| Migrations | Easy | Limited |
+
+---
+
+# Interview Question
+
+## Q1: Which approach is mostly used in modern projects?
+
+### Answer:
+
+```text
+Code First
+```
+
+Because it provides:
+
+- Faster development
+- Better maintainability
+- Easy migrations
+- Full control in C#
+
+</details>
+
+---
+
+<details>
+<summary><h1>Install EF Core Packages</h1></summary>
+
+# Install EF Core Packages
+
+## Packages
+
+Install:
+
+```bash
+dotnet add package Microsoft.EntityFrameworkCore
+dotnet add package Microsoft.EntityFrameworkCore.SqlServer
+dotnet add package Microsoft.EntityFrameworkCore.Tools
+```
+
+---
+
+# 1. Microsoft.EntityFrameworkCore
+
+## Why Do We Need This Package?
+
+This is the main EF Core package.
+
+It contains:
+
+- DbContext
+- DbSet
+- LINQ support
+- Change tracking
+- ORM functionality
+
+Without this package:
+
+```text
+EF Core cannot work
+```
+
+---
+
+## Example
+
+```csharp
+public class AppDbContext : DbContext
+{
+    public DbSet<Employee> Employees { get; set; }
+}
+```
+
+`DbContext` and `DbSet` come from this package.
+
+---
+
+# 2. Microsoft.EntityFrameworkCore.SqlServer
+
+## Why Do We Need This Package?
+
+EF Core itself is database independent.
+
+This package acts as:
+
+```text
+SQL Server Provider
+```
+
+It helps EF Core:
+
+- Connect to SQL Server
+- Generate SQL Server queries
+- Execute SQL operations
+
+---
+
+## Example
+
+```csharp
+options.UseSqlServer(connectionString);
+```
+
+`UseSqlServer()` comes from this package.
+
+---
+
+# 3. Microsoft.EntityFrameworkCore.Tools
+
+## Why Do We Need This Package?
+
+This package provides migration and CLI tools.
+
+Used for:
+
+- Creating migrations
+- Updating database
+- Removing migrations
+- Scaffolding
+
+---
+
+## Important Commands
+
+### Create Migration
+
+```bash
+dotnet ef migrations add InitialCreate
+```
+
+---
+
+### Update Database
+
+```bash
+dotnet ef database update
+```
+
+---
+
+### Remove Migration
+
+```bash
+dotnet ef migrations remove
+```
+
+---
+
+# Summary Table
+
+| Package | Purpose |
+|----------|----------|
+| Microsoft.EntityFrameworkCore | Main EF Core functionality |
+| Microsoft.EntityFrameworkCore.SqlServer | SQL Server provider |
+| Microsoft.EntityFrameworkCore.Tools | Migration & CLI tools |
+
+---
+
+# Key Takeaways
+
+```text
+EntityFrameworkCore         → Main Engine
+SqlServer Package           → SQL Server Connector
+Tools Package               → Migration Manager
+```
+
+</details>
 
 </details>
