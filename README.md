@@ -1,8 +1,6 @@
 <details>
 <summary><h1>EF Core Fundamentals</h1></summary>
-
-# EF Core Fundamentals
-
+    
 ## What is Entity Framework Core (EF Core)?
 
 Entity Framework Core (EF Core) is an ORM (Object Relational Mapper) for .NET applications.
@@ -91,7 +89,6 @@ But for performance-critical systems, developers often combine:
 <details>
 <summary><h1>EF Core Architecture</h1></summary>
 
-# EF Core Architecture
 
 # Main Components of EF Core
 
