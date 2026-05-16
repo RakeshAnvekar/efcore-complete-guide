@@ -1235,3 +1235,528 @@ EF Core automatically monitors entity changes and generates required SQL updates
 
 ---
 </details>
+
+<details>
+    # Entity Framework Core — Change Tracker Deep Dive
+
+# What is Change Tracker?
+
+Change Tracker is an internal mechanism inside Entity Framework Core that tracks entity changes in memory.
+
+It helps EF Core identify:
+
+- What changed
+- Which entity changed
+- Which SQL query to generate
+- Whether to INSERT, UPDATE, or DELETE
+
+---
+
+# Why Change Tracker Exists
+
+Without Change Tracker, EF Core would not know:
+
+- Which entity was modified
+- Which columns changed
+- Which SQL statement should execute
+
+Change Tracker automatically monitors entity states.
+
+---
+
+# Where Change Tracker Exists
+
+Change Tracker exists inside:
+
+```csharp
+DbContext
+```
+
+Every DbContext has:
+
+```csharp
+context.ChangeTracker
+```
+
+---
+
+# Basic Flow
+
+```text
+Load Entity
+    ↓
+Entity Tracked
+    ↓
+Modify Entity
+    ↓
+State Changes
+    ↓
+SaveChanges()
+    ↓
+SQL Generated
+```
+
+---
+
+# Example
+
+## Step 1 — Load Entity
+
+```csharp
+var emp = context.Employees
+                 .First(x => x.Id == 1);
+```
+
+Entity state:
+
+```text
+Unchanged
+```
+
+EF stores:
+- Original values
+- Current values
+
+---
+
+## Step 2 — Modify Entity
+
+```csharp
+emp.Name = "Rakesh";
+```
+
+Now EF detects:
+
+```text
+Old Value = OldName
+New Value = Rakesh
+```
+
+Entity state becomes:
+
+```text
+Modified
+```
+
+---
+
+## Step 3 — SaveChanges
+
+```csharp
+context.SaveChanges();
+```
+
+Generated SQL:
+
+```sql
+UPDATE Employees
+SET Name = 'Rakesh'
+WHERE Id = 1
+```
+
+After save:
+
+```text
+Unchanged
+```
+
+---
+
+# Entity States
+
+EF Core tracks 5 main states.
+
+| State | Meaning |
+|---|---|
+| Added | New entity |
+| Modified | Existing entity updated |
+| Deleted | Entity marked for deletion |
+| Unchanged | No modifications |
+| Detached | Entity not tracked |
+
+---
+
+# Added State
+
+Example:
+
+```csharp
+context.Employees.Add(emp);
+```
+
+State:
+
+```text
+Added
+```
+
+Generated SQL:
+
+```sql
+INSERT INTO Employees
+```
+
+---
+
+# Modified State
+
+Example:
+
+```csharp
+emp.Name = "ABC";
+```
+
+State:
+
+```text
+Modified
+```
+
+Generated SQL:
+
+```sql
+UPDATE Employees
+```
+
+---
+
+# Deleted State
+
+Example:
+
+```csharp
+context.Employees.Remove(emp);
+```
+
+State:
+
+```text
+Deleted
+```
+
+Generated SQL:
+
+```sql
+DELETE FROM Employees
+```
+
+---
+
+# Unchanged State
+
+Example:
+
+```csharp
+var emp = context.Employees.First();
+```
+
+State:
+
+```text
+Unchanged
+```
+
+Meaning:
+- Entity loaded
+- No modifications
+
+---
+
+# Detached State
+
+Example:
+
+```csharp
+context.Entry(emp).State = EntityState.Detached;
+```
+
+Meaning:
+
+```text
+Entity is NOT tracked by EF
+```
+
+---
+
+# How Change Detection Works
+
+EF Core stores:
+- Original values
+- Current values
+
+During SaveChanges(), EF compares both values.
+
+Example:
+
+```text
+Original Name = Raj
+Current Name = Rakesh
+```
+
+Result:
+
+```text
+Modified
+```
+
+---
+
+# SaveChanges and Change Tracker
+
+SaveChanges():
+
+1. Detects changes
+2. Generates SQL
+3. Executes SQL
+4. Updates entity states
+
+---
+
+# AsNoTracking()
+
+Very important for performance optimization.
+
+Example:
+
+```csharp
+var employees = context.Employees
+                       .AsNoTracking()
+                       .ToList();
+```
+
+Meaning:
+
+```text
+Do NOT track entities
+```
+
+---
+
+# Benefits of AsNoTracking
+
+Advantages:
+- Faster queries
+- Less memory usage
+- Better performance
+
+Best for:
+- Read-only APIs
+- Reports
+- Dashboard screens
+
+---
+
+# When NOT to Use AsNoTracking
+
+Bad example:
+
+```csharp
+var emp = context.Employees
+                 .AsNoTracking()
+                 .First();
+
+emp.Name = "ABC";
+
+context.SaveChanges();
+```
+
+Problem:
+- EF does not detect changes
+- No UPDATE query generated
+
+Reason:
+- Entity is not tracked
+
+---
+
+# Attach()
+
+Used when entity comes from external source.
+
+Example:
+
+```csharp
+var emp = new Employee
+{
+    Id = 1,
+    Name = "Updated"
+};
+
+context.Attach(emp);
+```
+
+Now EF starts tracking entity.
+
+---
+
+# Entry()
+
+Used to inspect entity state.
+
+Example:
+
+```csharp
+var state = context.Entry(emp).State;
+```
+
+Possible values:
+- Added
+- Modified
+- Deleted
+- Unchanged
+- Detached
+
+---
+
+# ChangeTracker API
+
+Inspect tracked entities:
+
+```csharp
+context.ChangeTracker.Entries()
+```
+
+Useful for:
+- Debugging
+- Logging
+- Auditing
+
+---
+
+# Performance Considerations
+
+Tracking consumes:
+- Memory
+- CPU
+
+Why?
+Because EF stores:
+- Snapshots
+- Property values
+- Entity states
+
+---
+
+# Performance Problem Example
+
+```csharp
+var employees = context.Employees.ToList();
+```
+
+Problem:
+- All entities tracked
+- High memory usage
+
+Better:
+
+```csharp
+var employees = context.Employees
+                       .AsNoTracking()
+                       .ToList();
+```
+
+---
+
+# Best Practices
+
+## Rule 1
+Keep DbContext short-lived.
+
+---
+
+## Rule 2
+Use AsNoTracking for read-only operations.
+
+---
+
+## Rule 3
+Avoid loading huge tracked datasets.
+
+---
+
+## Rule 4
+Use tracking only when update/delete is required.
+
+---
+
+# Common Interview Questions
+
+## Q1. What is Change Tracker?
+
+Tracks entity changes and states inside DbContext.
+
+---
+
+## Q2. Why tracking impacts performance?
+
+Because EF stores snapshots and state information.
+
+---
+
+## Q3. Difference between tracked and non-tracked entities?
+
+| Tracked | Non-tracked |
+|---|---|
+| Change detection enabled | No change detection |
+| Higher memory usage | Lower memory usage |
+| Supports update | Mostly read-only |
+| Slower | Faster |
+
+---
+
+## Q4. Why use AsNoTracking()?
+
+Improves performance for read-only operations.
+
+---
+
+## Q5. What is Detached state?
+
+Entity ignored by DbContext.
+
+---
+
+# Real World Scenario
+
+Suppose dashboard API loads:
+
+```text
+50000 records
+Read-only data
+```
+
+Bad:
+
+```csharp
+context.Employees.ToListAsync();
+```
+
+Good:
+
+```csharp
+context.Employees
+       .AsNoTracking()
+       .ToListAsync();
+```
+
+Benefits:
+- Faster response
+- Lower memory usage
+- Better scalability
+
+---
+
+# Summary
+
+Change Tracker:
+- Tracks entities
+- Detects changes
+- Manages states
+- Helps generate SQL automatically
+
+Very important for:
+- CRUD operations
+- Performance tuning
+- Interview preparation
+- Real-world EF Core applications
+</details>
