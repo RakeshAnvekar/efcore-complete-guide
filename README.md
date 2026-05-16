@@ -913,5 +913,325 @@ Tools Package               → Migration Manager
 
 </details>
 <details>
-    test
+   ---
+
+# DbContext Lifecycle
+
+Lifecycle means:
+
+```text
+When DbContext is created → used → disposed
+```
+
+---
+
+# Lifecycle Flow
+
+```text
+Context created
+      ↓
+Query executed
+      ↓
+Tracks entities
+      ↓
+SaveChanges()
+      ↓
+Context disposed
+```
+
+---
+
+# In ASP.NET Core
+
+Normally:
+
+```csharp
+services.AddDbContext<AppDbContext>();
+```
+
+---
+
+# Default Lifetime
+
+```text
+Scoped
+```
+
+Meaning:
+
+```text
+One DbContext per HTTP request
+```
+
+---
+
+# Example
+
+## Request 1
+
+```text
+Create DbContext
+Use it
+Dispose it
+```
+
+---
+
+## Request 2
+
+```text
+Create new DbContext
+Use it
+Dispose it
+```
+
+---
+
+# Why Scoped is Best
+
+Because:
+
+- Safe
+- Efficient
+- Prevents threading issues
+- Better memory management
+
+---
+
+# Interview Question
+
+## Why DbContext should NOT be Singleton?
+
+### Answer:
+
+Because:
+
+- DbContext is NOT thread-safe
+- Change tracker becomes huge
+- Memory issues occur
+- Multiple users share same context
+- Data corruption risks increase
+
+---
+
+# What SaveChanges() Does
+
+## Example
+
+```csharp
+context.Employees.Add(employee);
+
+context.SaveChanges();
+```
+
+---
+
+# SaveChanges() Internally
+
+`SaveChanges()`:
+
+- Detects changes
+- Generates SQL
+- Opens DB connection
+- Executes SQL
+- Commits transaction
+- Updates tracking states
+
+---
+
+# Does SaveChanges() Save Immediately?
+
+```text
+YES
+```
+
+Until `SaveChanges()`:
+
+```text
+Changes only exist in memory
+```
+
+---
+
+# Example
+
+```csharp
+var emp = new Employee
+{
+    Name = "Rakesh"
+};
+
+context.Employees.Add(emp);
+```
+
+Still NOT in database.
+
+Only after:
+
+```csharp
+context.SaveChanges();
+```
+
+---
+
+# Multiple Operations
+
+```csharp
+context.Employees.Add(emp1);
+
+context.Employees.Add(emp2);
+
+context.SaveChanges();
+```
+
+EF sends both operations in a single transaction.
+
+---
+
+# Performance Tip
+
+## BAD
+
+```csharp
+foreach(var emp in employees)
+{
+    context.Employees.Add(emp);
+
+    context.SaveChanges();
+}
+```
+
+---
+
+## Why BAD?
+
+```text
+Database hit happens every iteration
+```
+
+This reduces performance.
+
+---
+
+# GOOD
+
+```csharp
+context.Employees.AddRange(employees);
+
+context.SaveChanges();
+```
+
+---
+
+# Why GOOD?
+
+Because:
+
+- Single database transaction
+- Better performance
+- Fewer DB calls
+- Faster execution
+
+---
+
+# 3. Change Tracking Basics
+
+```text
+VERY IMPORTANT TOPIC
+```
+
+---
+
+# What is Change Tracking?
+
+EF Core tracks entity changes automatically.
+
+---
+
+# Example
+
+```csharp
+var emp = context.Employees.First();
+
+emp.Name = "New Name";
+```
+
+EF remembers:
+
+```text
+Old Name → New Name
+```
+
+---
+
+# Why Tracking Exists
+
+So EF knows:
+
+- What changed
+- What SQL to generate
+- Which columns to update
+
+---
+
+# Without Tracking
+
+```text
+EF cannot update automatically
+```
+
+---
+
+# Example SQL Generated
+
+```sql
+UPDATE Employees
+SET Name = 'New Name'
+WHERE Id = 1
+```
+
+---
+
+# Important Interview Questions
+
+## Q1: What is DbContext Lifecycle?
+
+### Answer:
+
+```text
+Create → Use → Track Changes → SaveChanges → Dispose
+```
+
+---
+
+## Q2: Why is DbContext Scoped?
+
+### Answer:
+
+Because one DbContext per request is:
+
+- Safe
+- Efficient
+- Thread-safe
+- Easy to manage
+
+---
+
+## Q3: What happens before SaveChanges()?
+
+### Answer:
+
+Changes exist only inside memory and change tracker.
+
+Database is not updated until `SaveChanges()` executes.
+
+---
+
+## Q4: What is Change Tracking?
+
+### Answer:
+
+EF Core automatically monitors entity changes and generates required SQL updates.
+
+---
 </details>
