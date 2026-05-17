@@ -2675,4 +2675,906 @@ Most important EF Core performance optimizations:
 - Select()
 - Pagination
 </details>
+<details>
+    # Entity Framework Core — Relationships, Include & Loading Strategies
 
+# Introduction
+
+Relationships are one of the most important concepts in Entity Framework Core.
+
+Real-world applications always contain related data such as:
+
+```text
+Department → Employees
+Order → OrderItems
+Event → Approvals
+User → Roles
+```
+
+Understanding relationships and loading strategies is critical for:
+- EF Core interviews
+- Performance optimization
+- Real-world enterprise applications
+
+---
+
+# Types of Relationships
+
+Entity Framework Core mainly supports:
+
+1. One-to-One
+2. One-to-Many
+3. Many-to-Many
+
+---
+
+# 1. One-to-Many Relationship
+
+Most commonly used relationship.
+
+Example:
+
+```text
+One Department → Many Employees
+```
+
+---
+
+# Database Example
+
+## Departments Table
+
+| Id | Name |
+|---|---|
+| 1 | HR |
+
+---
+
+## Employees Table
+
+| Id | Name | DepartmentId |
+|---|---|---|
+| 1 | Rakesh | 1 |
+
+---
+
+# Entity Classes
+
+## Department Entity
+
+```csharp
+public class Department
+{
+    public int Id { get; set; }
+
+    public string Name { get; set; }
+
+    public ICollection<Employee> Employees { get; set; }
+}
+```
+
+---
+
+## Employee Entity
+
+```csharp
+public class Employee
+{
+    public int Id { get; set; }
+
+    public string Name { get; set; }
+
+    public int DepartmentId { get; set; }
+
+    public virtual Department Department { get; set; }
+}
+```
+
+---
+
+# Navigation Properties
+
+Example:
+
+```csharp
+public Department Department { get; set; }
+```
+
+This is called a:
+
+```text
+Navigation Property
+```
+
+Navigation properties help move between related entities.
+
+Example:
+
+```csharp
+employee.Department.Name
+```
+
+---
+
+# Foreign Key
+
+```csharp
+public int DepartmentId { get; set; }
+```
+
+This creates relationship between tables.
+
+Generated SQL:
+
+```sql
+FOREIGN KEY (DepartmentId)
+REFERENCES Departments(Id)
+```
+
+---
+
+# 2. One-to-One Relationship
+
+Example:
+
+```text
+Employee → Passport
+```
+
+One employee has one passport.
+
+---
+
+# Example Classes
+
+## Employee
+
+```csharp
+public class Employee
+{
+    public int Id { get; set; }
+
+    public Passport Passport { get; set; }
+}
+```
+
+---
+
+## Passport
+
+```csharp
+public class Passport
+{
+    public int Id { get; set; }
+
+    public int EmployeeId { get; set; }
+
+    public Employee Employee { get; set; }
+}
+```
+
+---
+
+# 3. Many-to-Many Relationship
+
+Example:
+
+```text
+Student ↔ Courses
+```
+
+One student can join many courses.
+
+One course can contain many students.
+
+---
+
+# Student Entity
+
+```csharp
+public class Student
+{
+    public int Id { get; set; }
+
+    public ICollection<Course> Courses { get; set; }
+}
+```
+
+---
+
+# Course Entity
+
+```csharp
+public class Course
+{
+    public int Id { get; set; }
+
+    public ICollection<Student> Students { get; set; }
+}
+```
+
+---
+
+# Junction Table
+
+EF Core automatically creates:
+
+```text
+StudentCourses
+```
+
+---
+
+# Include()
+
+One of the most important EF Core concepts.
+
+Used to load related data.
+
+---
+
+# Problem Without Include()
+
+Example:
+
+```csharp
+var employees = context.Employees.ToList();
+```
+
+Question:
+
+```text
+Will Department data load?
+```
+
+Answer:
+
+```text
+NO
+```
+
+Only Employees table data loads.
+
+---
+
+# Using Include()
+
+```csharp
+var employees = context.Employees
+                       .Include(x => x.Department)
+                       .ToList();
+```
+
+Now:
+- Employees loaded
+- Departments loaded
+
+---
+
+# Generated SQL
+
+```sql
+SELECT *
+FROM Employees e
+LEFT JOIN Departments d
+ON e.DepartmentId = d.Id
+```
+
+EF Core internally creates JOIN query.
+
+---
+
+# ThenInclude()
+
+Used for nested relationships.
+
+Example:
+
+```text
+Order → OrderItems → Product
+```
+
+---
+
+# Example
+
+```csharp
+var orders = context.Orders
+                    .Include(x => x.OrderItems)
+                    .ThenInclude(x => x.Product)
+                    .ToList();
+```
+
+---
+
+# Loading Strategies
+
+EF Core supports 3 loading strategies:
+
+1. Eager Loading
+2. Lazy Loading
+3. Explicit Loading
+
+---
+
+# Complete Loading Strategies Examples
+
+# Example Scenario
+
+We will use:
+
+```text
+Department → Employees
+```
+
+One Department has many Employees.
+
+---
+
+# DbContext
+
+```csharp
+public class AppDbContext : DbContext
+{
+    public DbSet<Employee> Employees { get; set; }
+
+    public DbSet<Department> Departments { get; set; }
+
+    protected override void OnConfiguring(
+        DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder
+            .UseLazyLoadingProxies()
+            .UseSqlServer("YourConnectionString");
+    }
+}
+```
+
+---
+
+# 1. Eager Loading
+
+# What is Eager Loading?
+
+Related data loads immediately with main entity.
+
+Uses:
+- Include()
+- ThenInclude()
+
+---
+
+# Eager Loading Example
+
+```csharp
+using var context = new AppDbContext();
+
+var employees = context.Employees
+                       .Include(x => x.Department)
+                       .ToList();
+```
+
+---
+
+# Generated SQL
+
+```sql
+SELECT e.Id,
+       e.Name,
+       e.DepartmentId,
+       d.Id,
+       d.Name
+FROM Employees e
+LEFT JOIN Departments d
+ON e.DepartmentId = d.Id
+```
+
+---
+
+# Access Data
+
+```csharp
+foreach(var emp in employees)
+{
+    Console.WriteLine(emp.Name);
+
+    Console.WriteLine(emp.Department.Name);
+}
+```
+
+---
+
+# Internal Flow
+
+```text
+Query Employees
+    ↓
+JOIN Departments
+    ↓
+Single SQL Query
+    ↓
+All data loaded together
+```
+
+---
+
+# Advantages of Eager Loading
+
+## 1. Single Query
+
+Everything loads together.
+
+---
+
+## 2. Better Performance
+
+Avoids multiple DB calls.
+
+---
+
+## 3. Predictable Queries
+
+Easy to debug.
+
+---
+
+## 4. Avoids N+1 Query Problem
+
+Very important advantage.
+
+---
+
+# Disadvantages
+
+## 1. Large Queries
+
+Too many Includes create huge SQL joins.
+
+---
+
+## 2. Over-fetching
+
+May load unnecessary data.
+
+---
+
+# Best Practice
+
+Prefer projection when possible.
+
+Better:
+
+```csharp
+var employees = context.Employees
+                       .Select(x => new
+                       {
+                           EmployeeName = x.Name,
+                           DepartmentName = x.Department.Name
+                       })
+                       .ToList();
+```
+
+---
+
+# 2. Lazy Loading
+
+# What is Lazy Loading?
+
+Related data loads ONLY when navigation property accessed.
+
+---
+
+# Required Package
+
+```bash
+dotnet add package Microsoft.EntityFrameworkCore.Proxies
+```
+
+---
+
+# Navigation Properties MUST be virtual
+
+```csharp
+public virtual Department Department { get; set; }
+```
+
+---
+
+# Lazy Loading Example
+
+```csharp
+using var context = new AppDbContext();
+
+var employee = context.Employees
+                      .First();
+```
+
+Generated SQL:
+
+```sql
+SELECT TOP(1) *
+FROM Employees
+```
+
+At this point:
+- Department NOT loaded
+
+---
+
+# Access Navigation Property
+
+```csharp
+var departmentName = employee.Department.Name;
+```
+
+NOW EF triggers another query automatically.
+
+Generated SQL:
+
+```sql
+SELECT *
+FROM Departments
+WHERE Id = 1
+```
+
+---
+
+# Internal Working
+
+```text
+Employee Loaded
+    ↓
+Navigation Property Accessed
+    ↓
+Proxy Intercepts Access
+    ↓
+New SQL Query Executes
+```
+
+---
+
+# Advantages of Lazy Loading
+
+## 1. Loads Data Only When Needed
+
+Smaller initial query.
+
+---
+
+## 2. Cleaner Code
+
+No Include() needed.
+
+---
+
+# HUGE PROBLEM — N+1 Query Problem
+
+# Example
+
+```csharp
+var employees = context.Employees.ToList();
+
+foreach(var emp in employees)
+{
+    Console.WriteLine(emp.Department.Name);
+}
+```
+
+Suppose:
+- 100 employees
+
+Queries executed:
+
+```text
+1 query → Employees
+100 queries → Departments
+```
+
+Total:
+
+```text
+101 queries
+```
+
+Very bad performance.
+
+---
+
+# Why This is Dangerous
+
+Problems:
+- Slow APIs
+- High DB load
+- Performance bottlenecks
+
+---
+
+# Solution
+
+Use:
+- Include()
+- Projection using Select()
+
+---
+
+# 3. Explicit Loading
+
+# What is Explicit Loading?
+
+Related data loaded manually when needed.
+
+---
+
+# Reference Loading Example
+
+```csharp
+using var context = new AppDbContext();
+
+var employee = context.Employees
+                      .First();
+```
+
+Department NOT loaded yet.
+
+---
+
+# Load Department Manually
+
+```csharp
+context.Entry(employee)
+       .Reference(x => x.Department)
+       .Load();
+```
+
+Generated SQL:
+
+```sql
+SELECT *
+FROM Departments
+WHERE Id = 1
+```
+
+---
+
+# Collection Loading Example
+
+```csharp
+var department = context.Departments
+                        .First();
+```
+
+Employees NOT loaded.
+
+---
+
+# Load Employees Collection
+
+```csharp
+context.Entry(department)
+       .Collection(x => x.Employees)
+       .Load();
+```
+
+Generated SQL:
+
+```sql
+SELECT *
+FROM Employees
+WHERE DepartmentId = 1
+```
+
+---
+
+# Internal Flow
+
+```text
+Entity Loaded
+    ↓
+Developer Calls Load()
+    ↓
+Specific SQL Query Executes
+    ↓
+Related Data Loaded
+```
+
+---
+
+# Advantages of Explicit Loading
+
+## 1. Full Control
+
+Developer decides when to load.
+
+---
+
+## 2. Better than Lazy Loading
+
+Avoids accidental queries.
+
+---
+
+# Disadvantages
+
+## 1. More Code
+
+Manual loading needed.
+
+---
+
+## 2. Multiple Queries Possible
+
+Can still create performance issues.
+
+---
+
+# Loading Strategies Comparison
+
+| Strategy | Query Timing | Queries | Performance | Control |
+|---|---|---|---|---|
+| Eager Loading | Immediate | Usually 1 | Usually Best | Medium |
+| Lazy Loading | On Demand | Many Possible | Risky | Low |
+| Explicit Loading | Manual | Controlled | Good | High |
+
+---
+
+# Which Loading Strategy is Best?
+
+Most enterprise applications prefer:
+
+```text
+Eager Loading + Projection
+```
+
+Reason:
+- Better performance
+- Predictable SQL
+- Easier debugging
+- Avoids N+1 issue
+
+---
+
+# Projection vs Include()
+
+Very important senior-level topic.
+
+---
+
+# BAD Example
+
+```csharp
+var employees = context.Employees
+                       .Include(x => x.Department)
+                       .ToList();
+```
+
+Loads all columns from both tables.
+
+---
+
+# BETTER Example
+
+```csharp
+var employees = context.Employees
+                       .Select(x => new
+                       {
+                           EmployeeName = x.Name,
+                           DepartmentName = x.Department.Name
+                       })
+                       .ToList();
+```
+
+Benefits:
+- Smaller SQL
+- Faster execution
+- Less memory usage
+
+---
+
+# Common Interview Questions
+
+# Q1. Difference between Include() and ThenInclude()?
+
+- Include() → first-level relationship
+- ThenInclude() → nested relationship
+
+---
+
+# Q2. What is Lazy Loading?
+
+Loads related data automatically when navigation property accessed.
+
+---
+
+# Q3. What is N+1 Query Problem?
+
+Large number of unnecessary queries caused by Lazy Loading.
+
+---
+
+# Q4. Which loading strategy is preferred?
+
+Usually:
+- Eager Loading
+- Projection using Select()
+
+---
+
+# Q5. Why projection is better than Include() sometimes?
+
+Because only required columns are fetched.
+
+---
+
+# Best Practices
+
+## Rule 1
+Avoid Lazy Loading in APIs.
+
+---
+
+## Rule 2
+Prefer projection using Select().
+
+---
+
+## Rule 3
+Use Include() carefully.
+
+---
+
+## Rule 4
+Avoid loading huge object graphs.
+
+---
+
+## Rule 5
+Always monitor generated SQL queries.
+
+---
+
+# Real-World Example
+
+Event Tracking System:
+
+```text
+Event
+  → Approvals
+      → User
+```
+
+Possible query:
+
+```csharp
+.Include(x => x.Approvals)
+.ThenInclude(x => x.User)
+```
+
+Better optimized version:
+
+```csharp
+.Select(x => new
+{
+    x.EventName,
+    Approvals = x.Approvals.Select(a => new
+    {
+        a.Status,
+        UserName = a.User.Name
+    })
+})
+```
+
+---
+
+# Summary
+
+Important concepts:
+- Relationships
+- Navigation properties
+- Include()
+- ThenInclude()
+- Eager Loading
+- Lazy Loading
+- Explicit Loading
+- N+1 problem
+- Projection optimization
+</details>
