@@ -1754,3 +1754,609 @@ Change Tracker:
 - Manages states
 - Helps generate SQL automatically
 </details>
+<details>
+    # Entity Framework Core — LINQ Deep Dive
+
+# What is LINQ?
+
+LINQ stands for:
+
+```text
+Language Integrated Query
+```
+
+LINQ allows querying data using C# syntax.
+
+Example:
+
+```csharp
+var employees = context.Employees
+                       .Where(x => x.Salary > 50000)
+                       .ToList();
+```
+
+Entity Framework Core converts LINQ into SQL.
+
+Generated SQL:
+
+```sql
+SELECT *
+FROM Employees
+WHERE Salary > 50000
+```
+
+---
+
+# Why LINQ is Important
+
+LINQ is the core of EF Core querying.
+
+EF Core works as:
+
+```text
+LINQ → Expression Tree → SQL Query
+```
+
+Without LINQ:
+- Querying becomes difficult
+- EF Core cannot generate SQL properly
+
+LINQ is one of the most important interview topics.
+
+---
+
+# LINQ Execution Flow
+
+```text
+LINQ Query
+    ↓
+Expression Tree
+    ↓
+EF Core
+    ↓
+SQL Query
+    ↓
+Database
+```
+
+---
+
+# Common LINQ Methods
+
+# 1. Where()
+
+Used for filtering data.
+
+Example:
+
+```csharp
+var employees = context.Employees
+                       .Where(x => x.Salary > 50000)
+                       .ToList();
+```
+
+Generated SQL:
+
+```sql
+SELECT *
+FROM Employees
+WHERE Salary > 50000
+```
+
+---
+
+# 2. Select()
+
+Very important for performance optimization.
+
+Used to fetch only required columns.
+
+---
+
+# Bad Example
+
+```csharp
+var employees = context.Employees
+                       .ToList();
+```
+
+Problem:
+- Loads all columns
+- High memory usage
+- Poor performance
+
+---
+
+# Good Example
+
+```csharp
+var employees = context.Employees
+                       .Select(x => new
+                       {
+                           x.Id,
+                           x.Name
+                       })
+                       .ToList();
+```
+
+Generated SQL:
+
+```sql
+SELECT Id, Name
+FROM Employees
+```
+
+---
+
+# Why Select() is Important
+
+Suppose a table contains:
+- 50 columns
+- Images
+- Large text fields
+
+Without Select():
+- Huge unnecessary data gets loaded
+
+Select() improves:
+- Performance
+- Memory usage
+- API response time
+
+---
+
+# 3. OrderBy()
+
+Used for sorting.
+
+Example:
+
+```csharp
+var employees = context.Employees
+                       .OrderBy(x => x.Name)
+                       .ToList();
+```
+
+Generated SQL:
+
+```sql
+ORDER BY Name
+```
+
+---
+
+# Descending Order
+
+```csharp
+.OrderByDescending(x => x.Salary)
+```
+
+---
+
+# 4. FirstOrDefault()
+
+Returns first matching record.
+
+Example:
+
+```csharp
+var emp = context.Employees
+                 .FirstOrDefault(x => x.Id == 1);
+```
+
+Generated SQL:
+
+```sql
+SELECT TOP(1) *
+FROM Employees
+WHERE Id = 1
+```
+
+---
+
+# 5. SingleOrDefault()
+
+Expects exactly one record.
+
+Example:
+
+```csharp
+var emp = context.Employees
+                 .SingleOrDefault(x => x.Email == email);
+```
+
+---
+
+# Difference Between FirstOrDefault() and SingleOrDefault()
+
+| FirstOrDefault | SingleOrDefault |
+|---|---|
+| Returns first match | Expects exactly one match |
+| No exception for duplicates | Throws exception if duplicates exist |
+| Faster | Slightly slower |
+
+---
+
+# When to Use SingleOrDefault()
+
+Use when data must be unique:
+- Email
+- Aadhaar
+- EmployeeCode
+
+---
+
+# 6. Any()
+
+Used to check existence.
+
+Example:
+
+```csharp
+var exists = context.Employees
+                    .Any(x => x.Id == 1);
+```
+
+Generated SQL uses:
+
+```sql
+EXISTS
+```
+
+---
+
+# Why Any() is Better than Count() > 0
+
+Bad:
+
+```csharp
+context.Employees.Count() > 0
+```
+
+Good:
+
+```csharp
+context.Employees.Any()
+```
+
+Reason:
+- Any() stops after first match
+- Better performance
+
+---
+
+# 7. Count()
+
+Used for total count.
+
+Example:
+
+```csharp
+var total = context.Employees.Count();
+```
+
+Generated SQL:
+
+```sql
+COUNT(*)
+```
+
+---
+
+# 8. Take()
+
+Used to limit records.
+
+Example:
+
+```csharp
+var employees = context.Employees
+                       .Take(10)
+                       .ToList();
+```
+
+Generated SQL:
+
+```sql
+TOP(10)
+```
+
+---
+
+# 9. Skip()
+
+Used for pagination.
+
+Example:
+
+```csharp
+.Skip(10)
+.Take(10)
+```
+
+---
+
+# Pagination Example
+
+```csharp
+var employees = context.Employees
+                       .OrderBy(x => x.Id)
+                       .Skip(10)
+                       .Take(10)
+                       .ToList();
+```
+
+Generated SQL:
+
+```sql
+OFFSET 10 ROWS
+FETCH NEXT 10 ROWS ONLY
+```
+
+---
+
+# Deferred Execution
+
+Very important interview topic.
+
+---
+
+# What is Deferred Execution?
+
+LINQ query executes only when result is needed.
+
+Example:
+
+```csharp
+var query = context.Employees
+                   .Where(x => x.Salary > 50000);
+```
+
+At this point:
+- SQL query has NOT executed yet
+
+---
+
+# Query Executes Here
+
+```csharp
+var result = query.ToList();
+```
+
+Now SQL executes.
+
+---
+
+# Benefits of Deferred Execution
+
+Advantages:
+- Dynamic query building
+- Better optimization
+- Query composition
+
+---
+
+# Immediate Execution
+
+Methods causing immediate execution:
+- ToList()
+- FirstOrDefault()
+- Count()
+- Any()
+
+These hit the database immediately.
+
+---
+
+# IQueryable vs IEnumerable
+
+One of the most important interview topics.
+
+---
+
+# IQueryable
+
+```csharp
+IQueryable<Employee>
+```
+
+Meaning:
+- Query not executed yet
+- SQL generation still possible
+- Filtering happens in database
+
+---
+
+# IEnumerable
+
+```csharp
+IEnumerable<Employee>
+```
+
+Meaning:
+- Data already loaded into memory
+- Filtering happens in application memory
+
+---
+
+# Bad Example
+
+```csharp
+var employees = context.Employees.ToList();
+
+employees.Where(x => x.Salary > 50000);
+```
+
+Problem:
+- Loads all data first
+- Filtering happens in memory
+- Poor performance
+
+---
+
+# Good Example
+
+```csharp
+var employees = context.Employees
+                       .Where(x => x.Salary > 50000)
+                       .ToList();
+```
+
+Filtering happens in SQL Server.
+
+---
+
+# Golden Rule
+
+```text
+Keep IQueryable as long as possible
+```
+
+---
+
+# Async LINQ Queries
+
+Very important for ASP.NET Core APIs.
+
+---
+
+# ToListAsync()
+
+```csharp
+var employees = await context.Employees
+                             .ToListAsync();
+```
+
+---
+
+# FirstOrDefaultAsync()
+
+```csharp
+var emp = await context.Employees
+                       .FirstOrDefaultAsync(
+                           x => x.Id == 1);
+```
+
+---
+
+# Why Async is Important
+
+Without async:
+- Thread blocks while waiting for DB
+
+With async:
+- Better scalability
+- Better throughput
+- Better API performance
+
+---
+
+# Common Interview Questions
+
+# Q1. Difference between IQueryable and IEnumerable?
+
+| IQueryable | IEnumerable |
+|---|---|
+| Executes in DB | Executes in memory |
+| Better performance | Poor for huge datasets |
+| Supports SQL translation | No SQL translation |
+
+---
+
+# Q2. What is Deferred Execution?
+
+Query executes only when result is required.
+
+---
+
+# Q3. Why Select() improves performance?
+
+Because only required columns are fetched.
+
+---
+
+# Q4. Why Any() is better than Count() > 0?
+
+Any() stops after first matching record.
+
+---
+
+# Q5. Why early ToList() is dangerous?
+
+Because it loads huge unnecessary data into memory.
+
+---
+
+# Best Practices
+
+## Rule 1
+Use Select() whenever possible.
+
+---
+
+## Rule 2
+Avoid early ToList().
+
+---
+
+## Rule 3
+Keep IQueryable as long as possible.
+
+---
+
+## Rule 4
+Use async methods in APIs.
+
+---
+
+## Rule 5
+Use pagination for huge datasets.
+
+---
+
+# Real World Performance Example
+
+Bad:
+
+```csharp
+var employees = context.Employees
+                       .ToList()
+                       .Where(x => x.Salary > 50000);
+```
+
+Problem:
+- Entire table loaded into memory
+
+---
+
+# Better Approach
+
+```csharp
+var employees = context.Employees
+                       .Where(x => x.Salary > 50000)
+                       .ToList();
+```
+
+Filtering happens inside SQL Server.
+
+Benefits:
+- Faster queries
+- Less memory usage
+- Better scalability
+
+---
+
+# Summary
+
+LINQ is the foundation of EF Core querying.
+
+Important concepts:
+- Deferred execution
+- IQueryable
+- IEnumerable
+- Select optimization
+- Pagination
+- Async queries
+
+</details>
+
