@@ -2348,15 +2348,331 @@ Benefits:
 
 # Summary
 
-LINQ is the foundation of EF Core querying.
+# Entity Framework Core — Performance Optimization Notes
 
-Important concepts:
-- Deferred execution
+# EF Core Performance Best Practices
+
+Performance optimization is one of the most important topics in Entity Framework Core interviews and real-world applications.
+
+---
+
+# 1. Use AsNoTracking() for Read-Only Queries
+
+Use `AsNoTracking()` when data is only being read and not updated.
+
+Example:
+
+```csharp
+var employees = await context.Employees
+                             .AsNoTracking()
+                             .ToListAsync();
+```
+
+---
+
+# Why AsNoTracking() Improves Performance
+
+Without `AsNoTracking()`:
+- EF Core tracks every entity
+- Stores snapshots
+- Tracks property changes
+- Uses more memory and CPU
+
+With `AsNoTracking()`:
+- No change tracking
+- Less memory usage
+- Faster query execution
+
+---
+
+# Best Use Cases
+
+Use for:
+- GET APIs
+- Reports
+- Dashboard screens
+- Read-only data
+
+---
+
+# Avoid
+
+Do NOT use `AsNoTracking()` if entity needs update later.
+
+Bad Example:
+
+```csharp
+var emp = await context.Employees
+                       .AsNoTracking()
+                       .FirstAsync();
+
+emp.Name = "Updated";
+
+await context.SaveChangesAsync();
+```
+
+Problem:
+- EF does not track entity
+- Changes are not saved
+
+---
+
+# 2. Keep IQueryable as Long as Possible
+
+Very important optimization rule.
+
+---
+
+# Bad Example
+
+```csharp
+var employees = context.Employees.ToList();
+
+var filtered = employees
+               .Where(x => x.Salary > 50000);
+```
+
+Problem:
+- Entire table loaded into memory
+- Filtering happens in application memory
+- Poor performance
+
+---
+
+# Good Example
+
+```csharp
+var employees = context.Employees
+                       .Where(x => x.Salary > 50000)
+                       .ToList();
+```
+
+Benefits:
+- Filtering happens in SQL Server
+- Less memory usage
+- Faster query execution
+
+---
+
+# Why IQueryable is Important
+
+`IQueryable`:
+- Delays execution
+- Allows SQL translation
+- Performs filtering in database
+
+Golden Rule:
+
+```text
+Keep IQueryable as long as possible
+```
+
+---
+
+# 3. Use Select() to Fetch Only Required Columns
+
+Very important optimization technique.
+
+---
+
+# Bad Example
+
+```csharp
+var employees = await context.Employees
+                             .ToListAsync();
+```
+
+Problem:
+- Loads all columns
+- High memory usage
+- Slow queries for large tables
+
+---
+
+# Good Example
+
+```csharp
+var employees = await context.Employees
+                             .Select(x => new
+                             {
+                                 x.Id,
+                                 x.Name
+                             })
+                             .ToListAsync();
+```
+
+Generated SQL:
+
+```sql
+SELECT Id, Name
+FROM Employees
+```
+
+---
+
+# Why Select() Improves Performance
+
+Suppose table contains:
+- 50 columns
+- Images
+- Large text fields
+
+Without `Select()`:
+- Huge unnecessary data loaded
+
+With `Select()`:
+- Only required columns fetched
+
+Benefits:
+- Lower memory usage
+- Faster API response
+- Better scalability
+
+---
+
+# 4. Use Pagination for Huge Datasets
+
+Never load huge datasets at once.
+
+---
+
+# Bad Example
+
+```csharp
+var employees = await context.Employees
+                             .ToListAsync();
+```
+
+Problem:
+- Loads all records
+- High memory usage
+- Slow API response
+
+---
+
+# Good Example
+
+```csharp
+var employees = await context.Employees
+                             .OrderBy(x => x.Id)
+                             .Skip(0)
+                             .Take(10)
+                             .ToListAsync();
+```
+
+Generated SQL:
+
+```sql
+OFFSET 0 ROWS
+FETCH NEXT 10 ROWS ONLY
+```
+
+---
+
+# Benefits of Pagination
+
+Advantages:
+- Faster response
+- Less memory usage
+- Better user experience
+- Better scalability
+
+---
+
+# Real API Example
+
+```http
+GET /api/employees?page=1&pageSize=10
+```
+
+---
+
+# Combined Best Practice Example
+
+```csharp
+var employees = await context.Employees
+                             .AsNoTracking()
+                             .Where(x => x.IsActive)
+                             .Select(x => new
+                             {
+                                 x.Id,
+                                 x.Name,
+                                 x.Email
+                             })
+                             .OrderBy(x => x.Name)
+                             .Skip(0)
+                             .Take(10)
+                             .ToListAsync();
+```
+
+This is:
+- Optimized
+- Read-only
+- Paginated
+- Minimal column selection
+- Efficient SQL generation
+
+---
+
+# Common Interview Questions
+
+## Q1. Why use AsNoTracking()?
+
+Improves read query performance by disabling change tracking.
+
+---
+
+## Q2. Why keep IQueryable as long as possible?
+
+Because filtering executes in database instead of application memory.
+
+---
+
+## Q3. Why Select() improves performance?
+
+Only required columns are fetched.
+
+---
+
+## Q4. Why pagination is important?
+
+Prevents loading huge datasets into memory.
+
+---
+
+# Golden Performance Rules
+
+## Rule 1
+Use `AsNoTracking()` for read-only operations.
+
+---
+
+## Rule 2
+Avoid early `ToList()`.
+
+---
+
+## Rule 3
+Keep `IQueryable` alive as long as possible.
+
+---
+
+## Rule 4
+Use `Select()` to fetch only needed columns.
+
+---
+
+## Rule 5
+Always paginate large datasets.
+
+---
+
+# Summary
+
+Most important EF Core performance optimizations:
+- AsNoTracking()
 - IQueryable
-- IEnumerable
-- Select optimization
+- Select()
 - Pagination
-- Async queries
-
 </details>
 
