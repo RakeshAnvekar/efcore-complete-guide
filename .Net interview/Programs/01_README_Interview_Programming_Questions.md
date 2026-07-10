@@ -12,7 +12,7 @@ implementation
 
 -   Reverse a number - Completed
 -   Check palindrome number - Completed
--   Armstrong number
+-   Armstrong number - Completed
 -   Strong number
 -   Perfect number
 -   Prime number
@@ -24,7 +24,7 @@ implementation
 -   Count digits
 -   Sum of digits
 -   Swap two numbers
--   Find largest of three numbers
+-   Find largest of three numbers 
 
 ------------------------------------------------------------------------
 
