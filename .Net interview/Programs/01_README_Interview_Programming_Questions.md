@@ -11,7 +11,7 @@ implementation
 # 1. Basic Programming
 
 -   Reverse a number - Completed
--   Check palindrome number
+-   Check palindrome number - Completed
 -   Armstrong number
 -   Strong number
 -   Perfect number
