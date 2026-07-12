@@ -13,10 +13,10 @@ implementation
 -   Reverse a number - Completed
 -   Check palindrome number - Completed
 -   Armstrong number - Completed
--   Strong number
--   Perfect number
--   Prime number
--   Print primes between N1 and N2
+-   Strong number - Completed
+-   Perfect number - Completed
+-   Prime number - Completed
+-   Print primes between N1 and N2  - Completed
 -   Factorial
 -   Fibonacci series
 -   GCD
