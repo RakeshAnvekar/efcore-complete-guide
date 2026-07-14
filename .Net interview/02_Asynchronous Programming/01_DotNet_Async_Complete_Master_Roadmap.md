@@ -15,11 +15,11 @@
 
 ## 1.4 Sequential vs Concurrent Execution - completed
 
-## 1.5 CPU-bound Work
+## 1.5 CPU-bound Work - completed
 
-## 1.6 I/O-bound Work
+## 1.6 I/O-bound Work - completed   
 
-## 1.7 Why Thread.Sleep() is Bad
+## 1.7 Why Thread.Sleep() is Bad - completed
 
 ## 1.8 Why Task.Delay() is Better
 

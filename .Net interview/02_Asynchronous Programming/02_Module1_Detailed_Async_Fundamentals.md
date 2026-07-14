@@ -414,4 +414,2016 @@ After this module you should understand:
 
 # Next Module
 
-**1.5 CPU-bound Work**
+# Module 1.5 -- CPU-bound Work
+
+> Author: ChatGPT\
+> Purpose: Deep interview preparation for Senior/Lead .NET Developers.
+
+------------------------------------------------------------------------
+
+# What You Will Learn
+
+-   What is CPU-bound work?
+-   Why is it called CPU-bound?
+-   CPU vs I/O-bound
+-   Thread behavior
+-   CPU behavior
+-   Should CPU-bound work use async?
+-   Should CPU-bound work use Task.Run()?
+-   ASP.NET Core scenarios
+-   WinForms/WPF scenarios
+-   Common mistakes
+-   Interview questions
+
+------------------------------------------------------------------------
+
+# What is CPU?
+
+CPU stands for **Central Processing Unit**.
+
+It is the brain of the computer responsible for executing instructions
+and performing calculations.
+
+Examples: - Mathematical calculations - Sorting - Searching -
+Encryption - Compression - Image processing - JSON parsing
+
+------------------------------------------------------------------------
+
+# What is CPU-bound Work?
+
+## Definition
+
+CPU-bound work is work where execution time is dominated by
+**computation**.
+
+The CPU spends its time performing calculations instead of waiting for
+external resources.
+
+In CPU-bound work:
+
+-   CPU is busy
+-   Thread is busy
+-   No waiting for database/network/files
+
+------------------------------------------------------------------------
+
+# Real-Life Example
+
+Imagine solving a mathematics exam.
+
+``` text
+Question
+   ↓
+Think
+   ↓
+Calculate
+   ↓
+Write Answer
+```
+
+You are continuously thinking.
+
+There is no waiting.
+
+That is CPU-bound work.
+
+------------------------------------------------------------------------
+
+# Programming Example
+
+``` csharp
+int sum = 0;
+
+for(int i=0;i<100000000;i++)
+{
+    sum += i;
+}
+```
+
+CPU execution
+
+``` text
+Addition
+ ↓
+Addition
+ ↓
+Addition
+ ↓
+Addition
+```
+
+CPU remains busy.
+
+------------------------------------------------------------------------
+
+# More Examples
+
+## Sorting
+
+``` csharp
+numbers.Sort();
+```
+
+## Encryption
+
+``` csharp
+SHA256.HashData(data);
+```
+
+## Image Processing
+
+-   Resize
+-   Rotate
+-   Compress
+
+## PDF Generation
+
+-   Render pages
+-   Draw images
+-   Compress content
+
+## Machine Learning
+
+-   Prediction
+-   Matrix multiplication
+
+------------------------------------------------------------------------
+
+# CPU Timeline
+
+``` text
+Time →
+
+CPU
+
+██████████████████████████
+```
+
+CPU never waits.
+
+------------------------------------------------------------------------
+
+# Thread Timeline
+
+``` text
+Thread
+
+↓
+
+Calculate
+
+↓
+
+Calculate
+
+↓
+
+Calculate
+
+↓
+
+Finish
+```
+
+Thread is busy throughout.
+
+------------------------------------------------------------------------
+
+# Does CPU-bound Work Need async?
+
+Usually **No**.
+
+Example
+
+``` csharp
+int result = 10 + 20;
+```
+
+No waiting.
+
+Nothing to make asynchronous.
+
+Async is mainly for operations that wait on external resources.
+
+------------------------------------------------------------------------
+
+# Should CPU-bound Work Use Task.Run()?
+
+## Console Application
+
+Usually No.
+
+No UI responsiveness issue.
+
+------------------------------------------------------------------------
+
+## WinForms / WPF
+
+Often Yes.
+
+Without Task.Run()
+
+``` text
+UI Thread
+
+↓
+
+Calculation
+
+↓
+
+Application Freezes
+```
+
+With Task.Run()
+
+``` csharp
+await Task.Run(() =>
+{
+    GenerateLargeReport();
+});
+```
+
+UI stays responsive while the calculation runs on a Thread Pool thread.
+
+------------------------------------------------------------------------
+
+## ASP.NET Core
+
+Usually **No**.
+
+Requests already execute on Thread Pool threads.
+
+Wrapping CPU work inside Task.Run() usually just moves it from one
+Thread Pool thread to another.
+
+It adds scheduling overhead and generally does not improve scalability.
+
+------------------------------------------------------------------------
+
+# CPU-bound vs I/O-bound
+
+  CPU-bound                       I/O-bound
+  ------------------------------- ----------------------------------
+  CPU performs calculations       CPU waits for external resources
+  High CPU usage                  Low CPU usage while waiting
+  Examples: sorting, encryption   Examples: database, HTTP, files
+  async usually not helpful       async is highly beneficial
+
+------------------------------------------------------------------------
+
+# Common CPU-bound Operations
+
+-   Sorting algorithms
+-   Mathematical calculations
+-   Image processing
+-   Video encoding
+-   PDF generation
+-   Compression
+-   Encryption
+-   AI inference
+-   Scientific calculations
+
+------------------------------------------------------------------------
+
+# Interview Questions
+
+## What is CPU-bound work?
+
+CPU-bound work is computation-heavy work where execution time is
+dominated by calculations performed by the CPU rather than waiting for
+external resources.
+
+------------------------------------------------------------------------
+
+## Does CPU-bound work benefit from async?
+
+Generally no.
+
+Async is designed for I/O-bound operations.
+
+------------------------------------------------------------------------
+
+## Should CPU-bound work use Task.Run()?
+
+-   Yes in UI applications to keep the UI responsive.
+-   Usually no in ASP.NET Core because work already runs on Thread Pool
+    threads.
+
+------------------------------------------------------------------------
+
+## Can CPU-bound work run in parallel?
+
+Yes.
+
+Independent CPU work can often be split across multiple CPU cores using:
+
+-   Parallel.For
+-   Parallel.ForEach
+-   PLINQ
+-   Carefully designed Tasks
+
+------------------------------------------------------------------------
+
+# Common Mistakes
+
+❌ CPU-bound work should always use async.
+
+Incorrect.
+
+❌ Task.Run() makes CPU calculations faster.
+
+Incorrect.
+
+Task.Run() only schedules work. It does not increase CPU speed.
+
+❌ CPU-bound means high memory usage.
+
+Incorrect.
+
+CPU usage and memory usage are different resources.
+
+------------------------------------------------------------------------
+
+# Key Takeaways
+
+-   CPU-bound work is computation-heavy.
+-   CPU stays busy.
+-   Thread stays busy.
+-   Async is mainly for I/O-bound work.
+-   Task.Run() is useful primarily for UI responsiveness.
+-   Parallelism may improve CPU-bound workloads if they can be divided
+    safely.
+
+------------------------------------------------------------------------
+
+# Module 1.6 – I/O-bound Work
+
+# Module Objective
+
+After completing this chapter, you should be able to answer:
+
+- What is I/O-bound work?
+- Why is it called I/O-bound?
+- Why does async exist?
+- CPU-bound vs I/O-bound
+- How threads behave during I/O
+- How the CPU behaves during I/O
+- How ASP.NET Core handles I/O
+- Why Task.Run() is usually unnecessary for I/O
+- Real-world examples
+- Best practices
+- Common interview questions
+
+---
+
+# Table of Contents
+
+- What is I/O?
+- What is I/O-bound Work?
+- Why is it Called I/O-bound?
+- Understanding Input and Output
+- Examples of I/O-bound Operations
+- Internal Execution Flow
+- CPU Perspective
+- Thread Perspective
+- Operating System Perspective
+- CLR Perspective
+- ASP.NET Core Example
+- CPU-bound vs I/O-bound
+- Common Mistakes
+- Best Practices
+- Interview Questions
+- Summary
+
+---
+
+# What is I/O?
+
+I/O stands for
+
+> **Input / Output**
+
+Input means obtaining data from an external source.
+
+Output means sending data to an external destination.
+
+Examples
+
+```
+Application
+
+↓
+
+Database
+
+↓
+
+File System
+
+↓
+
+Network
+
+↓
+
+Cloud Storage
+
+↓
+
+Printer
+
+↓
+
+Redis
+
+↓
+
+Message Queue
+
+↓
+
+SMTP Server
+```
+
+Notice something.
+
+These are **outside your application**.
+
+Your CPU cannot instantly access them.
+
+Communication takes time.
+
+---
+
+# What is I/O-bound Work?
+
+## Definition
+
+> I/O-bound work is work where execution time is dominated by waiting for external resources rather than CPU calculations.
+
+In simple words,
+
+The application is **waiting**.
+
+The CPU is **not busy**.
+
+The thread should ideally **not wait**.
+
+---
+
+# Why is it Called I/O-bound?
+
+The word
+
+"Bound"
+
+means
+
+"The speed is limited by."
+
+CPU-bound
+
+↓
+
+Limited by CPU speed
+
+I/O-bound
+
+↓
+
+Limited by external device speed
+
+Example
+
+```
+SQL Query
+
+250 ms
+
+CPU
+
+2 ms
+```
+
+What made it slow?
+
+SQL Server.
+
+Not CPU.
+
+Therefore
+
+It is I/O-bound.
+
+---
+
+# Real Life Example
+
+Imagine
+
+You ordered food online.
+
+```
+Place Order
+
+↓
+
+Restaurant Cooking
+
+↓
+
+Waiting
+
+↓
+
+Waiting
+
+↓
+
+Delivery Arrives
+
+↓
+
+Eat
+```
+
+Did your brain work for
+
+30 minutes?
+
+No.
+
+You simply waited.
+
+Exactly the same thing happens during
+
+Database calls
+
+HTTP Requests
+
+File Reads
+
+---
+
+# Programming Example
+
+```csharp
+var employees =
+    await context.Employees.ToListAsync();
+```
+
+Question
+
+What is the CPU doing?
+
+Almost nothing.
+
+Execution
+
+```
+Application
+
+↓
+
+Send SQL Query
+
+↓
+
+Waiting
+
+↓
+
+SQL Server Working
+
+↓
+
+Result Received
+
+↓
+
+Continue
+```
+
+---
+
+# Another Example
+
+```csharp
+string html =
+    await httpClient.GetStringAsync(url);
+```
+
+Execution
+
+```
+Application
+
+↓
+
+Internet
+
+↓
+
+Remote Server
+
+↓
+
+Waiting
+
+↓
+
+Response
+
+↓
+
+Continue
+```
+
+Again
+
+CPU isn't busy.
+
+---
+
+# Examples of I/O-bound Operations
+
+## Database
+
+```csharp
+await context.Users.ToListAsync();
+```
+
+---
+
+## HTTP Request
+
+```csharp
+await httpClient.GetAsync(url);
+```
+
+---
+
+## Reading Files
+
+```csharp
+await File.ReadAllTextAsync(path);
+```
+
+---
+
+## Writing Files
+
+```csharp
+await File.WriteAllTextAsync(path, text);
+```
+
+---
+
+## Azure Blob Storage
+
+```csharp
+await blobClient.UploadAsync(stream);
+```
+
+---
+
+## Amazon S3
+
+```csharp
+await s3Client.PutObjectAsync(request);
+```
+
+---
+
+## Redis
+
+```csharp
+await cache.GetStringAsync(key);
+```
+
+---
+
+## SMTP Email
+
+```csharp
+await smtpClient.SendMailAsync(message);
+```
+
+---
+
+## FTP
+
+```csharp
+await ftp.DownloadFileAsync();
+```
+
+---
+
+## Socket Communication
+
+```csharp
+await socket.ReceiveAsync(buffer);
+```
+
+---
+
+# Internal Execution Flow
+
+Suppose
+
+```csharp
+await File.ReadAllTextAsync();
+```
+
+Execution
+
+```
+Application
+
+↓
+
+Request File
+
+↓
+
+Operating System
+
+↓
+
+Disk
+
+↓
+
+Waiting
+
+↓
+
+Data Ready
+
+↓
+
+Continuation
+
+↓
+
+Resume
+```
+
+Notice
+
+The application is not continuously reading.
+
+The operating system does most of the work.
+
+---
+
+# CPU Perspective
+
+Imagine
+
+```
+await ReadDatabaseAsync();
+```
+
+CPU Timeline
+
+```
+Time →
+
+CPU
+
+██
+
+....................
+
+██
+```
+
+CPU worked
+
+Only
+
+- At the beginning
+
+- At the end
+
+Everything else
+
+was waiting.
+
+---
+
+# Thread Perspective
+
+Thread Timeline
+
+```
+Thread
+
+↓
+
+Send SQL Request
+
+↓
+
+Released
+
+↓
+
+FREE
+
+↓
+
+FREE
+
+↓
+
+FREE
+
+↓
+
+Continuation
+
+↓
+
+Resume
+```
+
+This is the biggest advantage of async.
+
+---
+
+# Operating System Perspective
+
+Suppose
+
+```
+ReadDatabaseAsync()
+```
+
+Execution
+
+```
+.NET
+
+↓
+
+Windows API
+
+↓
+
+Network Driver
+
+↓
+
+SQL Server
+
+↓
+
+Waiting
+
+↓
+
+Completion Notification
+
+↓
+
+.NET Runtime
+
+↓
+
+Continuation
+```
+
+The operating system monitors the external device.
+
+The application does not need a thread to continuously wait.
+
+---
+
+# CLR Perspective
+
+The CLR
+
+does not poll SQL Server continuously.
+
+Instead
+
+```
+Start Async Operation
+
+↓
+
+Return Thread
+
+↓
+
+Operating System Waits
+
+↓
+
+Completion Event
+
+↓
+
+CLR Schedules Continuation
+
+↓
+
+Thread Executes Remaining Code
+```
+
+Very important.
+
+No thread wastes time waiting.
+
+---
+
+# ASP.NET Core Example
+
+Imagine
+
+1000 users
+
+calling
+
+```
+GET /employees
+```
+
+Controller
+
+```csharp
+public async Task<IActionResult> Get()
+{
+    var employees =
+        await repository.GetEmployeesAsync();
+
+    return Ok(employees);
+}
+```
+
+Execution
+
+```
+HTTP Request
+
+↓
+
+Controller
+
+↓
+
+EF Core
+
+↓
+
+SQL Server
+
+↓
+
+Thread Returned
+
+↓
+
+SQL Executing
+
+↓
+
+Completion Event
+
+↓
+
+Continuation
+
+↓
+
+HTTP Response
+```
+
+Without async
+
+```
+1000 Requests
+
+↓
+
+1000 Waiting Threads
+```
+
+With async
+
+```
+1000 Requests
+
+↓
+
+Few Active Threads
+
+↓
+
+High Scalability
+```
+
+---
+
+# Why Async Exists
+
+Imagine
+
+```
+SQL Query
+
+↓
+
+250 ms Waiting
+```
+
+Without async
+
+The thread waits
+
+250 ms
+
+doing nothing.
+
+With async
+
+The thread becomes available to serve another request.
+
+That is why async exists.
+
+---
+
+# Should I Use Task.Run()?
+
+Incorrect
+
+```csharp
+await Task.Run(() =>
+{
+    File.ReadAllText(path);
+});
+```
+
+Why?
+
+You simply blocked another Thread Pool thread.
+
+Correct
+
+```csharp
+await File.ReadAllTextAsync(path);
+```
+
+Always prefer true asynchronous APIs.
+
+---
+
+# CPU-bound vs I/O-bound
+
+| CPU-bound | I/O-bound |
+|------------|-----------|
+| CPU performs calculations | CPU waits |
+| High CPU usage | Low CPU usage |
+| Sorting | Database |
+| Compression | HTTP |
+| Encryption | File Read |
+| Image Processing | Azure Blob |
+| PDF Generation | Redis |
+
+---
+
+# Best Practices
+
+✔ Use Async APIs whenever available
+
+✔ Use EF Core Async methods
+
+✔ Use HttpClient Async methods
+
+✔ Use File Async methods
+
+✔ Avoid blocking calls
+
+✔ Avoid Task.Run for naturally asynchronous APIs
+
+✔ Prefer await instead of Wait()
+
+---
+
+# Common Mistakes
+
+## Mistake 1
+
+Database calls are CPU-bound.
+
+Wrong.
+
+Database work is I/O-bound.
+
+---
+
+## Mistake 2
+
+Task.Run makes database faster.
+
+Wrong.
+
+It simply blocks another thread.
+
+---
+
+## Mistake 3
+
+Async makes SQL Server faster.
+
+Wrong.
+
+SQL takes exactly the same time.
+
+Only the application thread is released.
+
+---
+
+## Mistake 4
+
+Every async call creates a thread.
+
+Wrong.
+
+Most asynchronous I/O uses operating system mechanisms without dedicating a waiting thread.
+
+---
+
+# Interview Questions
+
+## What is I/O-bound work?
+
+I/O-bound work spends most of its time waiting for external resources instead of performing CPU calculations.
+
+---
+
+## Give examples of I/O-bound work.
+
+- Database
+- HTTP
+- Files
+- Redis
+- Azure Storage
+- SMTP
+- FTP
+
+---
+
+## Why is async useful?
+
+Because it releases threads while external resources are processing requests.
+
+---
+
+## Should database calls use async?
+
+Yes.
+
+Always use
+
+- ToListAsync()
+- FindAsync()
+- SaveChangesAsync()
+
+---
+
+## Should HTTP calls use async?
+
+Yes.
+
+Use
+
+```csharp
+await httpClient.GetAsync();
+```
+
+---
+
+## Should file operations use async?
+
+Yes.
+
+Especially large files.
+
+---
+
+## Should I wrap File.ReadAllText() inside Task.Run()?
+
+No.
+
+Prefer
+
+```csharp
+File.ReadAllTextAsync()
+```
+
+---
+
+## What actually waits?
+
+Not CPU.
+
+Not SQL Server.
+
+The application is waiting for the external resource to complete.
+
+With async, the thread is released during that wait.
+
+---
+
+# Summary
+
+Think of I/O-bound work as
+
+```
+WAITING
+
+NOT
+
+CALCULATING
+```
+
+Execution Flow
+
+```
+Application
+
+↓
+
+Send Request
+
+↓
+
+External Resource Working
+
+↓
+
+Thread Released
+
+↓
+
+Completion Notification
+
+↓
+
+Continuation
+
+↓
+
+Resume
+```
+
+---
+
+# Key Takeaways
+
+✅ I/O-bound work waits for external resources.
+
+✅ CPU is mostly idle during I/O.
+
+✅ Async is designed primarily for I/O-bound work.
+
+✅ Always use true asynchronous APIs when available.
+
+✅ Avoid wrapping naturally asynchronous operations inside `Task.Run()`.
+
+✅ ASP.NET Core scales because threads are released during I/O operations.
+
+---
+
+# Module 1.7 – Why Thread.Sleep() is Bad
+
+> **Author:** ChatGPT  
+> **Purpose:** Senior/Lead .NET Interview Preparation
+
+---
+
+# Learning Objectives
+
+After completing this chapter, you should be able to answer:
+
+- What is `Thread.Sleep()`?
+- Why do we use it?
+- How does it work internally?
+- What happens inside the CLR?
+- What happens inside Windows?
+- What happens to the Thread?
+- What happens to the CPU?
+- What happens to Memory?
+- Why is it bad in ASP.NET Core?
+- Why does it freeze WinForms/WPF?
+- Why is `Task.Delay()` preferred?
+
+---
+
+# What is Thread.Sleep()?
+
+`Thread.Sleep()` suspends (pauses) the execution of the **current thread** for a specified amount of time.
+
+```csharp
+Thread.Sleep(5000);
+```
+
+The above statement pauses the current thread for **5 seconds**.
+
+---
+
+# Definition
+
+> `Thread.Sleep()` blocks the **current thread** for the specified amount of time.
+
+Notice the wording carefully.
+
+It does **NOT**
+
+- Pause the CPU ❌
+- Pause the entire application ❌
+- Pause the operating system ❌
+
+It only pauses the **current thread**.
+
+---
+
+# Why Do We Need Thread.Sleep()?
+
+`Thread.Sleep()` was introduced to intentionally pause a thread.
+
+Some examples include:
+
+- Testing
+- Demonstrations
+- Simulating delays
+- Low-level threading scenarios
+
+Example
+
+```csharp
+Console.WriteLine("Starting...");
+
+Thread.Sleep(3000);
+
+Console.WriteLine("Completed");
+```
+
+Output
+
+```
+Starting...
+
+(wait 3 seconds)
+
+Completed
+```
+
+---
+
+# Real-Life Example
+
+Imagine you are reading a book.
+
+Someone tells you,
+
+> Stop reading for 5 minutes.
+
+You close the book.
+
+You don't read.
+
+You don't study.
+
+You simply wait.
+
+After 5 minutes,
+
+you continue from the same page.
+
+That is exactly what `Thread.Sleep()` does.
+
+---
+
+# How Thread.Sleep() Works Internally
+
+Suppose we execute
+
+```csharp
+Thread.Sleep(5000);
+```
+
+The execution flow is:
+
+```
+Application
+      │
+      ▼
+CLR
+      │
+      ▼
+Windows Kernel
+      │
+      ▼
+Thread enters Waiting State
+      │
+      ▼
+OS Timer Starts
+      │
+      ▼
+5 Seconds Pass
+      │
+      ▼
+Thread becomes Runnable
+      │
+      ▼
+Windows Scheduler
+      │
+      ▼
+Thread Continues Execution
+```
+
+---
+
+# Step-by-Step Internal Execution
+
+## Step 1
+
+Your application executes
+
+```csharp
+Thread.Sleep(5000);
+```
+
+The request goes to the CLR.
+
+```
+Your Code
+
+↓
+
+CLR
+```
+
+---
+
+## Step 2
+
+The CLR cannot put threads to sleep.
+
+Only the **Operating System** owns threads.
+
+Therefore,
+
+the CLR calls the Windows API.
+
+```
+CLR
+
+↓
+
+Windows Kernel
+```
+
+---
+
+## Step 3
+
+Windows changes the thread state.
+
+The thread enters
+
+```
+WaitSleepJoin
+```
+
+This is an actual .NET thread state.
+
+At this point,
+
+the thread cannot execute any instructions.
+
+---
+
+## Step 4
+
+Windows creates a timer.
+
+```
+5 Seconds
+
+↓
+
+Timer Running
+```
+
+Notice something.
+
+The timer belongs to the **Operating System**.
+
+Not the CLR.
+
+---
+
+## Step 5
+
+When the timer expires,
+
+Windows changes the thread back to
+
+```
+Runnable
+```
+
+The scheduler can now execute it again.
+
+---
+
+# Thread Perspective
+
+Imagine one thread.
+
+```
+Thread
+
+↓
+
+Execute Code
+
+↓
+
+Thread.Sleep()
+
+↓
+
+Sleeping
+
+↓
+
+Sleeping
+
+↓
+
+Sleeping
+
+↓
+
+Continue
+```
+
+The thread cannot perform any useful work while sleeping.
+
+---
+
+# CPU Perspective
+
+Question
+
+Does the CPU wait?
+
+No.
+
+Imagine
+
+```
+Thread #5
+
+↓
+
+Thread.Sleep()
+```
+
+The CPU immediately switches to another runnable thread.
+
+```
+CPU
+
+↓
+
+Thread 1
+
+↓
+
+Thread 2
+
+↓
+
+Thread 6
+
+↓
+
+Thread 9
+```
+
+The CPU is never sleeping.
+
+Only the thread is.
+
+---
+
+# Memory Perspective
+
+Consider
+
+```csharp
+void Test()
+{
+    int x = 100;
+
+    Thread.Sleep(5000);
+
+    Console.WriteLine(x);
+}
+```
+
+Question
+
+How does `x` still exist after five seconds?
+
+Because
+
+the thread stack still exists.
+
+Nothing is destroyed.
+
+Only execution pauses.
+
+---
+
+# Call Stack
+
+```
+Main()
+
+↓
+
+Test()
+
+↓
+
+x = 100
+
+↓
+
+Thread.Sleep()
+```
+
+The stack remains exactly the same during sleep.
+
+Nothing is removed.
+
+---
+
+# Does Thread.Sleep() Release the Thread?
+
+No.
+
+This is a very common interview question.
+
+Many developers answer incorrectly.
+
+`Thread.Sleep()`
+
+✔ Releases the CPU
+
+❌ Does NOT release the thread
+
+The thread still exists.
+
+It still owns:
+
+- Stack Memory
+- Local Variables
+- Call Stack
+
+It simply becomes unavailable for execution.
+
+---
+
+# ASP.NET Core Example
+
+Imagine
+
+```csharp
+public IActionResult Get()
+{
+    Thread.Sleep(5000);
+
+    return Ok();
+}
+```
+
+Execution
+
+```
+HTTP Request
+
+↓
+
+Kestrel
+
+↓
+
+Thread Pool Thread
+
+↓
+
+Thread.Sleep()
+
+↓
+
+Nothing
+
+↓
+
+Nothing
+
+↓
+
+Response
+```
+
+For five seconds,
+
+the Thread Pool thread is doing absolutely nothing.
+
+---
+
+# Why is This Bad?
+
+Suppose
+
+1000 users
+
+call your API.
+
+Every request executes
+
+```csharp
+Thread.Sleep(5000);
+```
+
+Result
+
+```
+1000 Requests
+
+↓
+
+1000 Sleeping Threads
+
+↓
+
+No Free Threads
+
+↓
+
+New Requests Wait
+
+↓
+
+Poor Scalability
+```
+
+This can eventually lead to **Thread Pool Starvation**.
+
+---
+
+# WinForms / WPF Example
+
+```csharp
+private void btnGenerate_Click(object sender, EventArgs e)
+{
+    Thread.Sleep(5000);
+}
+```
+
+What happens?
+
+```
+UI Thread
+
+↓
+
+Thread.Sleep()
+
+↓
+
+No Painting
+
+↓
+
+No Mouse Events
+
+↓
+
+No Keyboard Events
+
+↓
+
+Application Freezes
+```
+
+The application becomes
+
+```
+Not Responding
+```
+
+because the UI thread is blocked.
+
+---
+
+# Advantages
+
+Although generally discouraged in application code, `Thread.Sleep()` still has valid uses.
+
+✔ Simple to use
+
+✔ Useful for quick demos
+
+✔ Useful in some testing scenarios
+
+✔ Can be appropriate in low-level threading code
+
+---
+
+# Disadvantages
+
+❌ Blocks the current thread
+
+❌ Wastes Thread Pool threads
+
+❌ Reduces scalability
+
+❌ Freezes UI applications
+
+❌ Cannot process other work while sleeping
+
+❌ Poor choice for ASP.NET Core request processing
+
+---
+
+# Best Practices
+
+✔ Avoid `Thread.Sleep()` inside ASP.NET Core applications.
+
+✔ Avoid `Thread.Sleep()` on the UI thread.
+
+✔ Prefer asynchronous waiting mechanisms when appropriate.
+
+✔ Use `Thread.Sleep()` only when blocking is intentional.
+
+---
+
+# Common Interview Mistakes
+
+## Mistake 1
+
+"Thread.Sleep() blocks the CPU."
+
+❌ Wrong.
+
+It blocks the **thread**.
+
+---
+
+## Mistake 2
+
+"Thread.Sleep() releases the thread."
+
+❌ Wrong.
+
+It releases the CPU.
+
+The thread still exists.
+
+---
+
+## Mistake 3
+
+"Thread.Sleep() is asynchronous."
+
+❌ Wrong.
+
+It is a synchronous blocking API.
+
+---
+
+## Mistake 4
+
+"`Thread.Sleep()` should never be used."
+
+❌ Wrong.
+
+It still has valid use cases in testing, demos, and specialized threading scenarios.
+
+---
+
+# Interview Questions
+
+## What does Thread.Sleep() do?
+
+It blocks the current thread for the specified duration.
+
+---
+
+## Does Thread.Sleep() block the CPU?
+
+No.
+
+It blocks only the current thread.
+
+---
+
+## What thread state does Thread.Sleep() use?
+
+```
+WaitSleepJoin
+```
+
+---
+
+## Does Thread.Sleep() release the thread?
+
+No.
+
+It only releases the CPU.
+
+---
+
+## Why is Thread.Sleep() bad in ASP.NET Core?
+
+Because it blocks valuable Thread Pool threads, reducing scalability and potentially causing Thread Pool Starvation.
+
+---
+
+## Why does Thread.Sleep() freeze WinForms?
+
+Because it blocks the UI thread.
+
+The UI thread cannot process Windows messages while sleeping.
+
+---
+
+## When should Thread.Sleep() be used?
+
+Only when blocking is intentional, such as:
+
+- Testing
+- Simple console demos
+- Low-level threading scenarios
+
+---
+
+# Summary
+
+Think of `Thread.Sleep()` like this:
+
+```
+Thread
+
+↓
+
+Sleep
+
+↓
+
+Do Nothing
+
+↓
+
+Wake Up
+
+↓
+
+Continue
+```
+
+The thread remains allocated but performs no useful work during the sleep period.
+
+---
+
+# Key Takeaways
+
+- `Thread.Sleep()` blocks the **current thread**.
+- It does **not** block the CPU.
+- The thread enters the `WaitSleepJoin` state.
+- The call stack and local variables remain in memory.
+- Windows uses a kernel timer to wake the thread.
+- It is a poor choice for ASP.NET Core request processing.
+- It freezes UI applications when called on the UI thread.
+- It is a **synchronous blocking API**.
+
+---
+
+# Next Module
+
+➡ **Module 1.8 – Why Task.Delay() is Better**
+
+
+
