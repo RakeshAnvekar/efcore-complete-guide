@@ -17,13 +17,11 @@ implementation
 -   Perfect number - Completed
 -   Prime number - Completed
 -   Print primes between N1 and N2  - Completed
--   Factorial
--   Fibonacci series
--   GCD
--   LCM
--   Count digits
--   Sum of digits
--   Swap two numbers
+-   Factorial - Completed
+-   Fibonacci series-  Completed 
+-   Count digits -  Completed 
+-   Sum of digits -  Completed 
+-   Swap two numbers -Completed
 -   Find largest of three numbers 
 
 ------------------------------------------------------------------------
@@ -32,7 +30,7 @@ implementation
 
 -   Right Triangle
 -   Inverted Triangle
--   Pyramid
+-   Pyramid 
 -   Inverted Pyramid
 -   Diamond
 -   Floyd's Triangle
@@ -50,8 +48,8 @@ implementation
 
 # 3. Strings
 
--   Reverse String
--   Palindrome String
+-   Reverse String - Completed
+-   Palindrome String  - Completed
 -   Count Vowels
 -   Count Consonants
 -   Remove Duplicate Characters
