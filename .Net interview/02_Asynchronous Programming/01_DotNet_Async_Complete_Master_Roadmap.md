@@ -21,13 +21,13 @@
 
 ## 1.7 Why Thread.Sleep() is Bad - completed
 
-## 1.8 Why Task.Delay() is Better
+## 1.8 Why Task.Delay() is Better - completed
 
-## 1.9 Why async/await was Introduced
+## 1.9 Why async/await was Introduced - completed
 
 ## 1.10 How Operating Systems Perform Asynchronous I/O
 
-### Interview Questions
+### Interview Questions - completed
 
 -   What problem does async solve?
 -   Why not create a thread for every request?
@@ -37,15 +37,15 @@
 
 # Module 2 -- Thread Fundamentals
 
-## 2.1 Process
+## 2.1 Process - completed
 
-## 2.2 Thread
+## 2.2 Thread  - completed
 
-## 2.3 Managed Threads
+## 2.3 Managed Threads -completed
 
 ## 2.4 CLR Thread Pool
 
-## 2.5 Worker Threads
+## 2.5 Worker Threads 
 
 ## 2.6 IO Completion Port Threads (IOCP)
 

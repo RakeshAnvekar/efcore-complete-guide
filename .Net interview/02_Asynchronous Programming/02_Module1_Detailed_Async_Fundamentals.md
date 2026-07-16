@@ -3350,9 +3350,598 @@ Continue
 
 ---
 
-# Next Module
+# Module 1 – Interview Questions
 
-➡ **Module 1.9 – Why async/await Was Introduced**
+---
+
+# Q1. What problem does async solve?
+
+## Short Answer
+
+`async` solves the problem of **blocking threads during I/O-bound operations**.
+
+Instead of keeping a thread idle while waiting for a database, file, or network operation to complete, `async` releases the thread so it can perform other work.
+
+---
+
+## Why was this a problem?
+
+Imagine an ASP.NET Core API.
+
+```csharp
+public IActionResult GetEmployee()
+{
+    var employee = _repository.GetEmployee();
+
+    return Ok(employee);
+}
+```
+
+Suppose the database takes **300 ms** to respond.
+
+Timeline
+
+```
+Request
+
+↓
+
+Thread Starts
+
+↓
+
+Database Query
+
+↓
+
+Thread Waiting (300 ms)
+
+↓
+
+Response
+```
+
+For **300 ms**, the thread is doing nothing.
+
+Now imagine
+
+```
+1000 Users
+
+↓
+
+1000 Database Queries
+
+↓
+
+1000 Waiting Threads
+```
+
+This wastes valuable Thread Pool threads.
+
+---
+
+## How async Solves This
+
+Instead of blocking the thread
+
+```csharp
+public async Task<IActionResult> GetEmployee()
+{
+    var employee =
+        await _repository.GetEmployeeAsync();
+
+    return Ok(employee);
+}
+```
+
+Execution
+
+```
+Request
+
+↓
+
+Thread Starts
+
+↓
+
+Database Query
+
+↓
+
+Thread Released
+
+↓
+
+Database Working
+
+↓
+
+Completion Notification
+
+↓
+
+Continuation
+
+↓
+
+Response
+```
+
+The thread becomes available for other requests while the database is working.
+
+---
+
+## What async Improves
+
+✔ Thread Utilization
+
+✔ Scalability
+
+✔ Responsiveness
+
+✔ Resource Usage
+
+---
+
+## What async Does NOT Improve
+
+❌ CPU Speed
+
+❌ Database Speed
+
+❌ Network Speed
+
+❌ Disk Speed
+
+Example
+
+```
+Database Query
+
+300 ms
+
+Before async
+
+300 ms
+
+After async
+
+300 ms
+```
+
+The query still takes **300 ms**.
+
+The difference is that the application thread is no longer wasted.
+
+---
+
+## Interview Answer
+
+> Async solves the problem of blocking application threads during I/O-bound operations. It improves scalability by allowing threads to process other work while waiting for external resources such as databases, files, or network services.
+
+---
+
+# Q2. Why not create a thread for every request?
+
+## Short Answer
+
+Creating a thread for every request is expensive and does not scale.
+
+Modern servers use a Thread Pool and asynchronous I/O to efficiently reuse a limited number of threads.
+
+---
+
+## Why is Creating Threads Expensive?
+
+Every thread requires:
+
+- Memory for its stack
+- Operating System resources
+- Scheduling
+- Context Switching
+
+Example
+
+```
+10,000 Requests
+
+↓
+
+10,000 Threads
+```
+
+Problems
+
+```
+Huge Memory Usage
+
+↓
+
+Heavy Context Switching
+
+↓
+
+Poor Performance
+
+↓
+
+Poor Scalability
+```
+
+---
+
+## Thread Memory
+
+By default, each thread reserves stack space.
+
+Imagine
+
+```
+1000 Threads
+
+↓
+
+1 MB Stack Each
+
+↓
+
+Approximately 1 GB Reserved Memory
+```
+
+Even if much of the stack isn't used, creating thousands of threads still consumes significant resources.
+
+---
+
+## Context Switching
+
+Imagine the CPU.
+
+```
+Thread 1
+
+↓
+
+Thread 2
+
+↓
+
+Thread 3
+
+↓
+
+Thread 4
+
+↓
+
+Thread 5
+```
+
+Every switch requires the operating system to:
+
+- Save CPU registers
+- Save the instruction pointer
+- Save the stack pointer
+- Load another thread's state
+
+This process is called **context switching**.
+
+Too many threads lead to excessive context switching, which reduces overall performance.
+
+---
+
+## Modern Solution
+
+Instead of
+
+```
+1 Request
+
+↓
+
+1 Thread
+```
+
+Modern servers use
+
+```
+Many Requests
+
+↓
+
+Small Thread Pool
+
+↓
+
+Async I/O
+
+↓
+
+Threads Reused
+```
+
+---
+
+## ASP.NET Core Example
+
+Without async
+
+```
+1000 Requests
+
+↓
+
+1000 Waiting Threads
+
+↓
+
+Poor Scalability
+```
+
+With async
+
+```
+1000 Requests
+
+↓
+
+100 Active Threads
+
+↓
+
+Operating System Handles Waiting
+
+↓
+
+Continuation
+
+↓
+
+Responses
+```
+
+The exact number of active threads varies depending on the workload and runtime, but the key idea is that **far fewer threads are needed than requests**.
+
+---
+
+## Interview Answer
+
+> Creating a thread for every request is expensive because threads consume memory, require scheduling, and increase context switching. Instead, .NET uses the Thread Pool together with asynchronous I/O to efficiently reuse threads and improve scalability.
+
+---
+
+# Q3. Concurrency vs Parallelism
+
+This is one of the most frequently asked interview questions.
+
+Many developers confuse these concepts.
+
+They are **not the same**.
+
+---
+
+# What is Concurrency?
+
+## Definition
+
+Concurrency means **making progress on multiple tasks during the same period of time**.
+
+The tasks do **not** have to execute simultaneously.
+
+Example
+
+```
+Task A
+
+↓
+
+Task B
+
+↓
+
+Task A
+
+↓
+
+Task B
+```
+
+Both tasks are progressing.
+
+Only one may be executing at any instant.
+
+---
+
+## Real-Life Example
+
+One chef.
+
+Two dishes.
+
+```
+Cook Rice
+
+↓
+
+Rice Boiling
+
+↓
+
+Prepare Curry
+
+↓
+
+Rice Ready
+```
+
+The chef uses waiting time efficiently.
+
+This is concurrency.
+
+---
+
+# What is Parallelism?
+
+## Definition
+
+Parallelism means **multiple tasks execute at the same time**, usually on different CPU cores.
+
+Example
+
+```
+CPU Core 1
+
+↓
+
+Task A
+
+CPU Core 2
+
+↓
+
+Task B
+```
+
+Both tasks execute simultaneously.
+
+---
+
+## Real-Life Example
+
+Two chefs.
+
+```
+Chef 1
+
+↓
+
+Cook Rice
+
+
+Chef 2
+
+↓
+
+Cook Curry
+```
+
+Both work at the same time.
+
+---
+
+# Concurrency Example
+
+```csharp
+Task t1 = DownloadAsync();
+
+Task t2 = ReadDatabaseAsync();
+
+await Task.WhenAll(t1, t2);
+```
+
+The operations progress concurrently.
+
+Much of the time is spent waiting for I/O.
+
+---
+
+# Parallel Example
+
+```csharp
+Parallel.For(0, 1000000, i =>
+{
+    CalculatePrime(i);
+});
+```
+
+Multiple CPU cores perform calculations simultaneously.
+
+---
+
+# Comparison
+
+| Concurrency | Parallelism |
+|-------------|-------------|
+| Deals with multiple tasks | Executes multiple tasks simultaneously |
+| May use one thread or many | Typically uses multiple CPU cores |
+| Often used for I/O-bound work | Used for CPU-bound work |
+| Focus is responsiveness and scalability | Focus is reducing computation time |
+
+---
+
+# Common Mistakes
+
+## Mistake 1
+
+Concurrency means multiple threads.
+
+❌ Wrong.
+
+Concurrency can exist with a single thread (for example, an event loop).
+
+---
+
+## Mistake 2
+
+Parallelism and async are the same.
+
+❌ Wrong.
+
+Async is primarily about efficient waiting.
+
+Parallelism is about simultaneous computation.
+
+---
+
+## Mistake 3
+
+Task.Run() always means parallel programming.
+
+❌ Wrong.
+
+Task.Run() schedules work on the Thread Pool. Whether work runs in parallel depends on how many tasks are scheduled, available threads, and CPU cores.
+
+---
+
+# Interview Answer
+
+> Concurrency is the ability to make progress on multiple tasks during the same period of time. Parallelism is the execution of multiple tasks simultaneously on different CPU cores. Concurrency focuses on efficiently managing multiple operations, especially I/O-bound work, while parallelism focuses on speeding up CPU-bound computations.
+
+---
+
+# Module 1 Interview Summary
+
+## Async
+
+- Solves blocked threads during I/O.
+- Improves scalability.
+- Does not make operations faster.
+
+---
+
+## Threads
+
+- Threads are expensive.
+- Thread Pools reuse threads.
+- Async reduces unnecessary thread blocking.
+
+---
+
+## Concurrency
+
+- Multiple tasks make progress together.
+- Does not require simultaneous execution.
+
+---
+
+## Parallelism
+
+- Multiple tasks execute simultaneously.
+- Usually uses multiple CPU cores.
+- Best suited for CPU-bound work.
+
+
 
 W
 
