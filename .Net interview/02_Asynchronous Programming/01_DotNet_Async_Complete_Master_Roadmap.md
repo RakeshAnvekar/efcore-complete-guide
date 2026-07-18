@@ -43,19 +43,21 @@
 
 ## 2.3 Managed Threads -completed
 
-## 2.4 CLR Thread Pool
+## 2.4 CLR Thread Pool   -completed
 
-## 2.5 Worker Threads 
+## 2.5 Worker Threads  -completed
 
-## 2.6 IO Completion Port Threads (IOCP)
+## 2.6 IO Completion Port Threads (IOCP)  -completed
 
-## 2.7 Thread Scheduling
 
-## 2.8 Context Switching
+## 2.7 Thread Scheduling - Completed
 
-## 2.9 Thread Pool Starvation
+## 2.8 Context Switching - Completed
 
-## 2.10 Thread vs Task
+## 2.9 Thread Pool Starvation - Completed
+
+## 2.10 Thread vs Task  - Completed
+
 
 ### Interview Questions
 
