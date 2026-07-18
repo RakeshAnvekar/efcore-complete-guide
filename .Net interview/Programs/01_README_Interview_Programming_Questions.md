@@ -50,12 +50,11 @@ implementation
 
 -   Reverse String - Completed
 -   Palindrome String  - Completed
--   Count Vowels
--   Count Consonants
--   Remove Duplicate Characters
--   First Non-Repeated Character
--   First Repeated Character
--   Reverse Words
+-   Count Vowels - Completed
+-   Remove Duplicate Characters - Completed
+-   First Non-Repeated Character - Completed
+-   First Repeated Character - Completed
+-   Reverse Words - Completed
 -   Reverse Sentence
 -   Count Words
 -   Remove Spaces
