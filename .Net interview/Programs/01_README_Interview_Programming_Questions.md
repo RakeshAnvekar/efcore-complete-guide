@@ -56,12 +56,12 @@ implementation
 -   First Repeated Character - Completed
 -   Reverse Words - Completed
 -   Reverse Sentence
--   Count Words
--   Remove Spaces
--   String Compression
--   Anagram Check
--   Longest Word
--   Shortest Word
+-   Count Words - Completed
+-   Remove Spaces - Completed
+-   String Compression  - Completed
+-   Anagram Check  - Completed
+-   Longest Word  - Completed
+-   Shortest Word - Completed
 -   Character Frequency
 -   Most Frequent Character
 -   String Rotation

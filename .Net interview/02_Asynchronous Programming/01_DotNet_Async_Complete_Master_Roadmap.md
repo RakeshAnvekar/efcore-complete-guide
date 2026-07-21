@@ -66,37 +66,37 @@
 
 ------------------------------------------------------------------------
 
-# Module 3 -- Task
+# Module 3 -- Task 
 
-## 3.1 What is Task?
+## 3.1 What is Task? - Completed
 
-## 3.2 Task Lifecycle
+## 3.2 Task Lifecycle - Completed
 
-## 3.3 Task`<TResult>`{=html}
+## 3.3 Task`<TResult>`{=html} - Completed
 
-## 3.4 Task.CompletedTask
+## 3.4 Task.CompletedTask  - Completed
 
-## 3.5 Task.FromResult()
+## 3.5 Task.FromResult() - Completed
 
-## 3.6 Task.Run()
+## 3.6 Task.Run() - Completed
 
-## 3.7 Task.Factory.StartNew()
+## 3.7 Task.Factory.StartNew() - Completed
 
-## 3.8 Task.Wait()
+## 3.8 Task.Wait() - Completed
 
-## 3.9 Task.Result
+## 3.9 Task.Result - Completed
 
-## 3.10 Task.Status
+## 3.10 Task.Status - Completed
 
-## 3.11 Task.WhenAll()
+## 3.11 Task.WhenAll() - Completed
 
-## 3.12 Task.WhenAny()
+## 3.12 Task.WhenAny() - Completed
 
-## 3.13 Continuations
+## 3.13 Continuations - Completed
+ 
+## 3.14 Fire-and-Forget - Completed
 
-## 3.14 Fire-and-Forget
-
-## 3.15 Task Best Practices
+## 3.15 Task Best Practices - Completed
 
 ------------------------------------------------------------------------
 
