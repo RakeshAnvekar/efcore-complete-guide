@@ -62,8 +62,8 @@ implementation
 -   Anagram Check  - Completed
 -   Longest Word  - Completed
 -   Shortest Word - Completed
--   Character Frequency
--   Most Frequent Character
+-   Character Frequency - Completed
+-   Most Frequent Character - Completed
 -   String Rotation
 -   Substring Search
 -   Remove Special Characters

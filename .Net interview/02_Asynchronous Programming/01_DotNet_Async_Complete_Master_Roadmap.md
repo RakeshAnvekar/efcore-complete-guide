@@ -100,13 +100,13 @@
 
 ------------------------------------------------------------------------
 
-# Module 4 -- async Keyword
+# Module 4 -- async Keyword 
 
-## 4.1 What async Really Does
+## 4.1 What async Really Does - Completed
 
-## 4.2 Compiler Transformation
+## 4.2 Compiler Transformation - Completed
 
-## 4.3 async Methods
+## 4.3 async Methods 
 
 ## 4.4 async without await
 
@@ -136,21 +136,6 @@
 
 ## 5.7 Await vs Wait()
 
-------------------------------------------------------------------------
-
-# Module 6 -- Compiler Generated State Machine
-
-## 6.1 IAsyncStateMachine
-
-## 6.2 MoveNext()
-
-## 6.3 AsyncMethodBuilder
-
-## 6.4 AwaitUnsafeOnCompleted()
-
-## 6.5 Generated IL (High Level)
-
-## 6.6 Execution Flow
 
 ------------------------------------------------------------------------
 
@@ -312,22 +297,7 @@
 
 ------------------------------------------------------------------------
 
-# Module 16 -- Async Best Practices
-
-## 16.1 Avoid async void
-
-## 16.2 Avoid Wait()
-
-## 16.3 Avoid Result
-
-## 16.4 Don't Block Async Code
-
-## 16.5 Always Pass CancellationToken
-
-## 16.6 ConfigureAwait in Libraries
-
-## 16.7 Don't Ignore Tasks
-
+c
 ## 16.8 Avoid Unnecessary Task.Run
 
 ------------------------------------------------------------------------
