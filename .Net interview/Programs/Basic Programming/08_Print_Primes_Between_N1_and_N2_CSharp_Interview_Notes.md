@@ -37,36 +37,36 @@ Output
 ## C# Program
 
 ``` csharp
-using System;
+    using System;
 
-class Program
-{
-    static void Main()
+    class Program
     {
-        int n1 = 10;
-        int n2 = 30;
-
-        for (int number = n1; number <= n2; number++)
+        static void Main()
         {
-            if (number <= 1)
-                continue;
+            int n1 = 10;
+            int n2 = 30;
 
-            bool isPrime = true;
-
-            for (int i = 2; i * i <= number; i++)
+            for (int number = n1; number <= n2; number++)
             {
-                if (number % i == 0)
-                {
-                    isPrime = false;
-                    break;
-                }
-            }
+                if (number <= 1)
+                    continue;
 
-            if (isPrime)
-                Console.WriteLine(number);
+                bool isPrime = true;
+
+                for (int i = 2; i * i <= number; i++)
+                {
+                    if (number % i == 0)
+                    {
+                        isPrime = false;
+                        break;
+                    }
+                }
+
+                if (isPrime)
+                    Console.WriteLine(number);
+            }
         }
     }
-}
 ```
 
 ------------------------------------------------------------------------
