@@ -1,0 +1,17 @@
+Our roadmap continues with:
+
+✅ Module 31 – Middleware - Complated
+✅ Module 32 – Dependency Injection -Complated
+▶️ Module 33 – Configuration & Options Pattern -Not complated
+Module 34 – Logging
+Module 35 – Exception Handling
+Module 36 – Authentication
+Module 37 – Authorization
+Module 38 – Filters
+Module 39 – Caching
+Module 40 – API Versioning
+Module 41 – Minimal APIs
+Module 42 – Background Services
+Module 43 – Health Checks
+Module 44 – Deployment & Hosting
+Module 45 – ASP.NET Core Internals

@@ -1,0 +1,17 @@
+Learning Approach
+
+We'll study this module one part at a time, just as we did with Middleware and Dependency Injection.
+
+Part 1: Introduction to Exceptions -Done
+Part 2: try-catch-finally -Done
+Part 3: Throw vs throw ex  -Done
+Part 4: Built-in Exceptions
+Part 5: Custom Exceptions -Done
+Part 6: Exception Filters -Done
+Part 7: Global Exception Handling  -Done
+Part 8: Exception Handling Middleware -Done
+Part 9: UseExceptionHandler() -Done
+Part 10: ProblemDetails
+Part 11: Logging
+Part 12: Enterprise Design
+Part 13: Interview Questions
