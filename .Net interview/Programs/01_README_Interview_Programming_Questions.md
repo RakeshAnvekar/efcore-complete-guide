@@ -64,12 +64,12 @@ implementation
 -   Shortest Word - Completed
 -   Character Frequency - Completed
 -   Most Frequent Character - Completed
--   String Rotation
--   Substring Search
--   Remove Special Characters
--   Capitalize Words
--   camelCase to snake_case
--   Balanced Brackets
+-   String Rotation - Completed
+-   Substring Search - not Complated
+-   Remove Special Characters - Completed
+-   Capitalize Words - Completed
+-   camelCase to snake_case - Completed
+-   Balanced Brackets - Completed
 -   Longest Common Prefix
 -   Longest Palindrome Substring
 
@@ -421,9 +421,9 @@ Not
 
 ## Recommended Order
 
-1.  Basic Programming
+1.  Basic Programming- Done
 2.  Patterns
-3.  Strings
+3.  Strings - Done
 4.  Arrays
 5.  Recursion
 6.  Linked Lists
