@@ -106,11 +106,11 @@
 
 ## 4.2 Compiler Transformation - Completed
 
-## 4.3 async Methods 
+## 4.3 async Methods  - Completed
 
-## 4.4 async without await
+## 4.4 async without await - Completed
 
-## 4.5 async Task
+## 4.5 async Task  - Completed
 
 ## 4.6 async Task`<T>`{=html}
 

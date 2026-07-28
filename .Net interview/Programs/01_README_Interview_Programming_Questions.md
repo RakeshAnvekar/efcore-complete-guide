@@ -70,9 +70,9 @@ implementation
 -   Capitalize Words - Completed
 -   camelCase to snake_case - Completed
 -   Balanced Brackets - Completed
--   Longest Common Prefix
--   Longest Palindrome Substring
-
+-   Longest Common Prefix - Completed
+-   Longest Palindrome Substring  -Need to
+ 
 ------------------------------------------------------------------------
 
 # 4. Arrays
