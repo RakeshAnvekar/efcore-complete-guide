@@ -1,12 +1,13 @@
 
 API Gateway	- Complated
-Saga - Complated	
-CQRS	
+Saga - Complated		
 Outbox	 - Complated	
-Circuit Breaker	
-Retry	
-Database per Service	
-Event-Driven Architecture	
+Circuit Breaker	 - Complated
+Retry	 - Complated
+Database per Service - Complated	
+Event-Driven Architecture	 - complated
+
+CQRS
 Service Discovery	
 Event Sourcing
 Idempotency
