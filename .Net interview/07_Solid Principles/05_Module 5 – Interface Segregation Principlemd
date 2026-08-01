@@ -1,0 +1,830 @@
+# Module 5 – Interface Segregation Principle (ISP)
+
+> **Course:** SOLID Principles – Complete Master Roadmap
+
+**Difficulty:** ⭐⭐⭐⭐☆
+
+**Interview Importance:** ⭐⭐⭐⭐⭐
+
+---
+
+# Table of Contents
+
+1. Learning Objectives
+2. Introduction
+3. Definition of ISP
+4. Why Do We Need ISP?
+5. What is a Fat Interface?
+6. Employee Management System Example
+7. Problems with Fat Interfaces
+8. Solution – Split the Interface
+9. Payment System Example
+10. Printer Example
+11. ASP.NET Core Example
+12. Relationship Between ISP and LSP
+13. Benefits of ISP
+14. Common Mistakes
+15. Best Practices
+16. Interview Questions
+17. Interview Answers
+18. Summary
+19. Key Takeaways
+20. Next Lesson
+
+---
+
+# Learning Objectives
+
+By the end of this module, you will understand:
+
+- What the Interface Segregation Principle (ISP) is
+- Why large interfaces are bad
+- What is a Fat Interface
+- How to split interfaces correctly
+- Real-world software examples
+- ASP.NET Core implementation
+- Relationship between ISP and LSP
+- Enterprise best practices
+
+---
+
+# Introduction
+
+As applications grow, developers often create one large interface that contains many unrelated methods.
+
+Initially, this may seem convenient, but over time it creates problems:
+
+- Classes implement methods they don't need.
+- Developers write empty methods.
+- Developers throw `NotSupportedException`.
+- Code becomes difficult to maintain.
+
+ISP solves this problem.
+
+---
+
+# Definition
+
+The Interface Segregation Principle states:
+
+> **Clients should not be forced to depend upon interfaces they do not use.**
+
+— Robert C. Martin
+
+---
+
+# Simple Meaning
+
+Instead of creating one huge interface,
+
+Create several small interfaces.
+
+Each interface should represent **one capability**.
+
+---
+
+# Why Do We Need ISP?
+
+Imagine your company develops an Employee Management System.
+
+Someone creates this interface.
+
+```csharp
+public interface IEmployeeService
+{
+    void AddEmployee(Employee employee);
+
+    void UpdateEmployee(Employee employee);
+
+    void DeleteEmployee(int id);
+
+    Employee GetEmployee(int id);
+
+    void GenerateSalary();
+
+    void SendEmail();
+
+    void ExportToExcel();
+
+    void PrintReport();
+}
+```
+
+At first glance, everything looks fine.
+
+But different modules use different features.
+
+---
+
+# HR Module
+
+Needs only
+
+```
+AddEmployee()
+
+UpdateEmployee()
+
+DeleteEmployee()
+
+GetEmployee()
+```
+
+---
+
+# Finance Module
+
+Needs only
+
+```
+GenerateSalary()
+```
+
+---
+
+# Reporting Module
+
+Needs only
+
+```
+ExportToExcel()
+
+PrintReport()
+```
+
+---
+
+# Notification Module
+
+Needs only
+
+```
+SendEmail()
+```
+
+---
+
+# What is a Fat Interface?
+
+An interface containing unrelated methods is called a **Fat Interface**.
+
+Example
+
+```
+IEmployeeService
+
+├── Employee Management
+
+├── Salary
+
+├── Email
+
+├── Reports
+```
+
+Everything is combined into one interface.
+
+This violates ISP.
+
+---
+
+# Problem with Fat Interfaces
+
+Suppose Finance creates this class.
+
+```csharp
+public class SalaryService : IEmployeeService
+{
+    public void GenerateSalary()
+    {
+        Console.WriteLine("Salary Generated");
+    }
+
+    public void AddEmployee(Employee employee)
+    {
+        throw new NotSupportedException();
+    }
+
+    public void UpdateEmployee(Employee employee)
+    {
+        throw new NotSupportedException();
+    }
+
+    public void DeleteEmployee(int id)
+    {
+        throw new NotSupportedException();
+    }
+
+    public Employee GetEmployee(int id)
+    {
+        throw new NotSupportedException();
+    }
+
+    public void SendEmail()
+    {
+        throw new NotSupportedException();
+    }
+
+    public void ExportToExcel()
+    {
+        throw new NotSupportedException();
+    }
+
+    public void PrintReport()
+    {
+        throw new NotSupportedException();
+    }
+}
+```
+
+---
+
+# Why Is This Bad?
+
+Notice these methods:
+
+```csharp
+throw new NotSupportedException();
+```
+
+The class is being forced to implement functionality that it does not support.
+
+This is an ISP violation.
+
+---
+
+# Solution – Split the Interface
+
+Instead of one large interface,
+
+Create multiple small interfaces.
+
+---
+
+## Employee Management
+
+```csharp
+public interface IEmployeeManagement
+{
+    void AddEmployee(Employee employee);
+
+    void UpdateEmployee(Employee employee);
+
+    void DeleteEmployee(int id);
+
+    Employee GetEmployee(int id);
+}
+```
+
+---
+
+## Salary
+
+```csharp
+public interface ISalaryService
+{
+    void GenerateSalary();
+}
+```
+
+---
+
+## Email
+
+```csharp
+public interface IEmailService
+{
+    void SendEmail();
+}
+```
+
+---
+
+## Reports
+
+```csharp
+public interface IReportService
+{
+    void ExportToExcel();
+
+    void PrintReport();
+}
+```
+
+Now each class implements only the interface it needs.
+
+---
+
+# Payment System Example
+
+Imagine this interface.
+
+```csharp
+public interface IPayment
+{
+    void Pay(decimal amount);
+
+    void Refund(decimal amount);
+
+    void CancelPayment();
+
+    void GenerateInvoice();
+}
+```
+
+Credit Card supports everything.
+
+Gift Card supports only payment.
+
+A developer writes
+
+```csharp
+public class GiftCardPayment : IPayment
+{
+    public void Pay(decimal amount)
+    {
+        Console.WriteLine("Gift Card Payment");
+    }
+
+    public void Refund(decimal amount)
+    {
+        throw new NotSupportedException();
+    }
+
+    public void CancelPayment()
+    {
+        throw new NotSupportedException();
+    }
+
+    public void GenerateInvoice()
+    {
+        throw new NotSupportedException();
+    }
+}
+```
+
+Again,
+
+```
+NotSupportedException
+```
+
+The interface is too large.
+
+---
+
+# Better Payment Design
+
+Split it.
+
+```csharp
+public interface IPayment
+{
+    void Pay(decimal amount);
+}
+```
+
+```csharp
+public interface IRefundable
+{
+    void Refund(decimal amount);
+}
+```
+
+```csharp
+public interface ICancelable
+{
+    void CancelPayment();
+}
+```
+
+```csharp
+public interface IInvoiceGenerator
+{
+    void GenerateInvoice();
+}
+```
+
+Now
+
+```csharp
+public class CreditCardPayment :
+    IPayment,
+    IRefundable,
+    ICancelable,
+    IInvoiceGenerator
+{
+}
+```
+
+Gift Card
+
+```csharp
+public class GiftCardPayment : IPayment
+{
+    public void Pay(decimal amount)
+    {
+        Console.WriteLine("Gift Card Payment");
+    }
+}
+```
+
+No unnecessary methods.
+
+ISP is satisfied.
+
+---
+
+# Printer Example
+
+Suppose someone creates this interface.
+
+```csharp
+public interface IPrinter
+{
+    void Print();
+
+    void Scan();
+
+    void Fax();
+}
+```
+
+Now a basic printer implements it.
+
+```csharp
+public class BasicPrinter : IPrinter
+{
+    public void Print()
+    {
+        Console.WriteLine("Printing...");
+    }
+
+    public void Scan()
+    {
+        throw new NotSupportedException();
+    }
+
+    public void Fax()
+    {
+        throw new NotSupportedException();
+    }
+}
+```
+
+Again,
+
+The class is forced to implement unsupported methods.
+
+---
+
+# Better Printer Design
+
+```csharp
+public interface IPrinter
+{
+    void Print();
+}
+```
+
+```csharp
+public interface IScanner
+{
+    void Scan();
+}
+```
+
+```csharp
+public interface IFax
+{
+    void Fax();
+}
+```
+
+Basic Printer
+
+```csharp
+public class BasicPrinter : IPrinter
+{
+    public void Print()
+    {
+        Console.WriteLine("Printing...");
+    }
+}
+```
+
+MultiFunction Printer
+
+```csharp
+public class MultiFunctionPrinter :
+    IPrinter,
+    IScanner,
+    IFax
+{
+    public void Print()
+    {
+        Console.WriteLine("Printing...");
+    }
+
+    public void Scan()
+    {
+        Console.WriteLine("Scanning...");
+    }
+
+    public void Fax()
+    {
+        Console.WriteLine("Fax Sent...");
+    }
+}
+```
+
+Now every class implements only the features it supports.
+
+---
+
+# ASP.NET Core Example
+
+Suppose we have this interface.
+
+```csharp
+public interface IUserService
+{
+    User GetById(int id);
+
+    void Add(User user);
+
+    void Update(User user);
+
+    void Delete(int id);
+}
+```
+
+Instead, split it.
+
+Read
+
+```csharp
+public interface IUserReader
+{
+    User GetById(int id);
+}
+```
+
+Write
+
+```csharp
+public interface IUserWriter
+{
+    void Add(User user);
+
+    void Update(User user);
+}
+```
+
+Delete
+
+```csharp
+public interface IUserDeleter
+{
+    void Delete(int id);
+}
+```
+
+Benefits
+
+- Read-only APIs depend only on IUserReader.
+- Admin APIs depend on all interfaces.
+- Better dependency injection.
+- Easier unit testing.
+
+---
+
+# Relationship Between ISP and LSP
+
+Remember LSP?
+
+We had
+
+```csharp
+public interface IPayment
+{
+    void Pay();
+
+    void Refund();
+}
+```
+
+GiftCardPayment couldn't refund.
+
+It threw
+
+```csharp
+throw new NotSupportedException();
+```
+
+That violated LSP.
+
+How did we fix it?
+
+By splitting the interface.
+
+```
+IPayment
+
+↓
+
+Pay()
+```
+
+```
+IRefundable
+
+↓
+
+Refund()
+```
+
+This is ISP.
+
+Therefore,
+
+**ISP helps prevent LSP violations.**
+
+---
+
+# Benefits of ISP
+
+- Small interfaces
+- Easy maintenance
+- Loose coupling
+- Better Dependency Injection
+- Easier unit testing
+- Cleaner architecture
+- Better scalability
+- Easier code reuse
+
+---
+
+# Common Mistakes
+
+## Mistake 1
+
+Creating one huge interface for an entire module.
+
+---
+
+## Mistake 2
+
+Implementing methods with
+
+```csharp
+throw new NotSupportedException();
+```
+
+---
+
+## Mistake 3
+
+Adding unrelated methods to an existing interface.
+
+---
+
+## Mistake 4
+
+Using one interface everywhere without considering different client needs.
+
+---
+
+# Best Practices
+
+✔ Keep interfaces small and focused.
+
+✔ One interface should represent one capability.
+
+✔ Split large interfaces into multiple interfaces.
+
+✔ Avoid forcing classes to implement unused methods.
+
+✔ Prefer composition over oversized interfaces.
+
+✔ Follow ISP to naturally satisfy LSP.
+
+---
+
+# Interview Questions
+
+## Question 1
+
+What is Interface Segregation Principle?
+
+---
+
+## Question 2
+
+What is a Fat Interface?
+
+---
+
+## Question 3
+
+Why are Fat Interfaces bad?
+
+---
+
+## Question 4
+
+How do you identify an ISP violation?
+
+---
+
+## Question 5
+
+How is ISP related to LSP?
+
+---
+
+## Question 6
+
+Give a real software example of ISP.
+
+---
+
+# Interview Answers
+
+## What is ISP?
+
+ISP states that clients should not be forced to depend on interfaces they do not use. It promotes designing small, focused interfaces.
+
+---
+
+## What is a Fat Interface?
+
+A Fat Interface contains many unrelated methods, forcing implementing classes to provide unnecessary implementations.
+
+---
+
+## How do you identify an ISP violation?
+
+If a class throws `NotSupportedException` or leaves methods empty because it doesn't need them, the interface is likely too broad.
+
+---
+
+## How is ISP related to LSP?
+
+By splitting large interfaces into focused interfaces, ISP prevents classes from implementing unsupported methods. This helps satisfy the Liskov Substitution Principle.
+
+---
+
+## Give a real software example.
+
+Examples include:
+
+- Payment Services
+- Employee Management Systems
+- Printer/Scanner/Fax devices
+- ASP.NET Core User Services
+- Reporting Services
+
+---
+
+# Summary
+
+The Interface Segregation Principle encourages designing **small, focused interfaces** instead of large, all-purpose interfaces.
+
+Each class should implement only the capabilities it actually supports.
+
+This leads to cleaner code, better maintainability, easier testing, and fewer runtime issues like `NotSupportedException`.
+
+---
+
+# Key Takeaways
+
+✔ Clients should not depend on methods they don't use.
+
+✔ Avoid Fat Interfaces.
+
+✔ Split interfaces by responsibility.
+
+✔ Small interfaces improve flexibility and maintainability.
+
+✔ ISP naturally helps prevent LSP violations.
+
+✔ ASP.NET Core applications commonly apply ISP by separating reading, writing, deleting, reporting, and notification capabilities into different interfaces.
+
+---
+
+# Next Lesson
+
+## Module 6 – Dependency Inversion Principle (DIP)
+
+Topics Covered
+
+- What is Dependency Inversion Principle?
+- High-Level vs Low-Level Modules
+- Dependency Injection (DI)
+- Inversion of Control (IoC)
+- Constructor Injection
+- ASP.NET Core DI Container
+- Service Lifetimes (Transient, Scoped, Singleton)
+- Real-world Enterprise Examples
+- Interview Questions & Answers
