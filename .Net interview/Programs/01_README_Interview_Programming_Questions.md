@@ -79,12 +79,12 @@ implementation
 
 ## Easy
 
--   Largest Element
--   Smallest Element
--   Second Largest
--   Second Smallest
--   Remove Duplicates
--   Missing Number
+-   Largest Element - Completed
+-   Smallest Element - Completed
+-   Second Largest - Completed
+-   Second Smallest - Completed
+-   Remove Duplicates - Completed
+-   Missing Number - Completed
 -   Duplicate Number
 -   Move Zeros
 -   Rotate Left
