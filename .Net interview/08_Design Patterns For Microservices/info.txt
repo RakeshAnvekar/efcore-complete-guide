@@ -8,6 +8,6 @@ Database per Service - Complated
 Event-Driven Architecture	 - complated
 
 CQRS
-Service Discovery	
+Service Discovery - complated	
 Event Sourcing
 Idempotency
