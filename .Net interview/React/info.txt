@@ -72,9 +72,9 @@ useEffect(() => {
 
 useRef - done 
 
-useMemo
+useMemo - done
 
-useCallback
+useCallback - done
 
 Custom Hooks
 
@@ -90,7 +90,7 @@ axios
 async/await
 
 
-Module 10 – React Router
+Module 10 – React Router - done
 
 Need
 
@@ -103,7 +103,7 @@ useParams
 
 
 
-Module 11 – Context API ⭐⭐⭐⭐☆
+Module 11 – Context API ⭐⭐⭐⭐☆  -done
 
 Need
 
