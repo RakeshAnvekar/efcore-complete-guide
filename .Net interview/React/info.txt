@@ -1,0 +1,153 @@
+Module 1 – React Basics ⭐⭐⭐⭐⭐  - done
+What is React?
+Virtual DOM
+Real DOM vs Virtual DOM
+SPA (Single Page Application)
+JSX
+React Architecture
+Component-Based Architecture
+
+
+Module 2 – Components ⭐⭐⭐⭐⭐ - done
+Functional Components
+Class Components (basic understanding)
+Component Lifecycle (functional equivalent)
+Props
+Props Drilling
+
+Interview Questions
+
+What are Props?
+Are Props immutable?
+Props vs State
+ 
+Module 3 – State Management ⭐⭐⭐⭐⭐ - done
+useState
+State updates
+State batching
+Controlled Components
+Uncontrolled Components
+
+Module 4 – Event Handling  - done
+onClick
+onChange
+onSubmit
+PreventDefault
+Event Bubbling (basic)
+
+Module 5 – Conditional Rendering - done
+
+
+Module 6 – Lists - done
+
+Need
+
+map()
+
+key
+
+unique key
+
+Module 7 – Hooks ⭐⭐⭐⭐⭐
+
+This is the MOST IMPORTANT topic.
+
+Learn
+
+useState - done
+
+Know
+
+Initial State
+Updating State
+Functional Update
+
+useEffect ⭐⭐⭐⭐⭐ - done
+
+Understand
+
+useEffect(() => {
+
+}, []);
+
+useRef - done 
+
+useMemo
+
+useCallback
+
+Custom Hooks
+
+
+Module 8 – API Calls ⭐⭐⭐⭐⭐
+
+Need
+
+fetch()
+
+axios
+
+async/await
+
+
+Module 10 – React Router
+
+Need
+
+BrowserRouter
+Routes
+Route
+Link
+useNavigate
+useParams
+
+
+
+Module 11 – Context API ⭐⭐⭐⭐☆
+
+Need
+
+createContext
+Provider
+useContext
+
+Interview Question
+
+Context API vs Redux
+
+
+
+Module 12 – Performance ⭐⭐⭐⭐☆
+
+Need
+
+React.memo
+useMemo
+useCallback
+Lazy Loading
+Code Splitting
+
+
+
+Module 13 – React Lifecycle ⭐⭐⭐⭐☆
+
+Need relation
+
+Class Component
+
+↓
+
+Functional Component
+
+↓
+
+useEffect()
+
+
+Module 14 – Error Handling
+
+Need
+
+Error Boundary
+try/catch
+API Error Handling
