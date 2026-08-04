@@ -1,10 +1,10 @@
-Change Tracker
-DbContext Lifetime
-Lazy Loading
-Eager Loading
-Explicit Loading
-AsNoTracking()
-SaveChanges()
+Change Tracker - done
+DbContext Lifetime  - done
+Lazy Loading - done
+Eager Loading - done
+Explicit Loading - done
+AsNoTracking() - done
+SaveChanges() - done
 Transactions
 Concurrency
 Compiled Queries
