@@ -5,6 +5,7 @@ Eager Loading - done
 Explicit Loading - done
 AsNoTracking() - done
 SaveChanges() - done
-Transactions
-Concurrency
-Compiled Queries
+Transactions - done
+Concurrency - need to 
+Compiled Queries - done
+Interceptors -need to 
