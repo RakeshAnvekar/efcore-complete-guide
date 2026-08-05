@@ -85,7 +85,7 @@ implementation
 -   Second Smallest - Completed
 -   Remove Duplicates - Completed
 -   Missing Number - Completed
--   Duplicate Number
+-   Duplicate Number - Completed
 -   Move Zeros
 -   Rotate Left
 -   Rotate Right
