@@ -18,7 +18,7 @@
 - 🔹 Lazy Loading
 - 🔹 Code Splitting
 - 🌍 Real Project Example
-- 📊 React.memo vs useMemo vs useCallback
+- 📊 React.memo vs useMemo vs useCallback 
 - 📊 Lazy Loading vs Code Splitting
 - ✅ Best Practices
 - 🎤 Common Interview Questions
