@@ -445,15 +445,15 @@ Composition makes components flexible and reusable.
 Every component goes through three stages.
 
 ```
-Mount
+Mount (Component is created and added to the UI for the first time.)
 
 ↓
 
-Update
+Update (Component already exists but data/state/props changed.)
 
 ↓
 
-Unmount
+Unmount (Component removed from UI.)
 ```
 
 ### Functional Component
