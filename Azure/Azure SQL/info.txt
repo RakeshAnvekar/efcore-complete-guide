@@ -1,0 +1,10 @@
+1. What is Azure SQL?
+2. Azure SQL Architecture
+3. Connectivity
+4. Security
+5. Scaling
+6. Backup & Restore
+7. High Availability
+8. Performance Tuning
+9. Monitoring
+10. Real-world Architecture

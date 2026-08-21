@@ -1,0 +1,10 @@
+1. What is Azure Function?
+2. Why Use Azure Function?
+3. Triggers
+4. Bindings
+5. Hosting Plans
+6. Scaling
+7. Durable Functions
+8. Real-world Examples
+9. Azure Function vs Web API
+10. Azure Function + Service Bus
