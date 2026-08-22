@@ -1,0 +1,145 @@
+
+Module 1: Kafka Fundamentals
+What is Kafka?
+Why Kafka was created?
+Kafka vs RabbitMQ
+Kafka vs Azure Service Bus
+Event-Driven Architecture
+Publish-Subscribe Pattern
+Message Queue vs Event Streaming
+Kafka Architecture Overview
+Kafka Components
+Producer
+Consumer
+Broker
+Topic
+Partition
+Offset
+Consumer Group
+Kafka Message Flow
+
+
+Module 2: Topics & Partitions
+What is Topic?
+Topic Naming Strategy
+Topic Retention
+Topic Compaction
+Partitions
+Why Partitions?
+Partition Key
+Partitioning Strategy
+Ordering Guarantee
+Rebalancing
+
+
+
+Module 3: Producers (.NET)
+Topics:
+
+Kafka Producer
+Producer Configuration
+ProduceAsync
+Delivery Report
+Producer Acknowledgements	
+Idempotent Producer
+Producer Retry
+Compression
+Batching
+
+Producer Performance Tuning
+
+Module 4: Consumers (.NET)
+Kafka Consumer
+Consumer Group
+Consumer Configuration
+Offset Management
+Poll Loop
+Auto Commit
+Manual Commit
+Offset Storage
+Rebalancing
+Consumer Lag
+
+Module 5: Offset Management
+
+Very Important
+
+What is Offset?
+Offset Storage
+AutoOffsetReset
+Commit Strategies
+At Most Once
+At Least Once
+Exactly Once
+
+Module 6: Reliability
+Replication
+Replication Factor
+Leader Partition
+Follower Partition
+ISR (In Sync Replicas)
+Producer Acks
+Min In Sync Replicas
+Broker Failure Handling
+Consumer Failure Handling
+Data Durability	
+
+Module 7: Serialization
+JSON Serialization
+Avro
+Protobuf
+Schema Registry
+Versioning Messages
+
+Module 8: Kafka Scaling
+Horizontal Scaling
+Partition Scaling
+Broker Scaling
+Consumer Scaling
+Producer Scaling
+Throughput Optimization
+Load Distribution
+
+
+Module 10: Error Handling
+Retry Strategy
+Dead Letter Queue (DLQ)
+Poison Messages
+Message Validation
+Circuit Breaker
+
+Module 11: Kafka in Microservices
+Event Driven Design
+Producer Service
+Consumer Service
+Choreography
+Orchestration
+Saga Pattern
+Event Sourcing
+CQRS
+
+Module 12: Kafka + .NET Background Service
+IHostedService
+BackgroundService
+Kafka Consumer Worker
+Dependency Injection
+Graceful Shutdown	
+
+Module 13: Kafka Performance
+Batching
+Compression
+Producer Tuning
+Consumer Tuning
+Throughput
+Latency
+Consumer Lag
+
+
+Module 14: Monitoring
+Kafka UI
+Confluent Control Center
+Prometheus
+Grafana
+ELK
+Application Insights
+OpenTelemetry
